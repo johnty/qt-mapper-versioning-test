@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QTabWidget" name="tabMaps">
+       <widget class="QTabWidget" name="tabMain">
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -30,10 +30,21 @@
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QTableView" name="tableViewDevsSigs"/>
+             <widget class="QTreeView" name="treeView"/>
             </item>
             <item>
-             <widget class="QTreeView" name="treeView"/>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Signal Props</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableView" name="tableViewDevsSigs"/>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -42,6 +53,11 @@
         <widget class="QWidget" name="tabDB">
          <attribute name="title">
           <string>db out</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="tabMapper">
+         <attribute name="title">
+          <string>Page</string>
          </attribute>
         </widget>
         <widget class="QWidget" name="tabVersions">

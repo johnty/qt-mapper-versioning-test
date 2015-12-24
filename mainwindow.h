@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QStandardItemModel>
+#include <QTreeView>
 #include <QDebug>
 
 
@@ -18,11 +19,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public Q_SLOTS:
+    void selectedItem(QModelIndex model_idx);
+
 private:
     Ui::MainWindow *ui;
     QStandardItemModel *listDevsTree;
-    QStandardItemModel *listDevsTable;
+    QStandardItemModel *listPropsTable;
     void syncTreeToTable();
+
+    QWidget* popUpWind;
+    QTreeView* popUpContent;
 };
 
 #endif // MAINWINDOW_H

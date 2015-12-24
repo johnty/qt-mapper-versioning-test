@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //testList.append("device 2");
 
     listDevsTree = new QStandardItemModel();
-    listDevsTable = new QStandardItemModel();
+    listPropsTable = new QStandardItemModel();
 
 
     listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
@@ -28,14 +28,30 @@ MainWindow::MainWindow(QWidget *parent) :
     rootItem->appendRow(dev1);
     rootItem->appendRow(dev2);
 
-    syncTreeToTable();
+    //syncTreeToTable();
 
     //listDevs.setStringList(testList);
-
-
-    ui->tableViewDevsSigs->setModel(listDevsTable);
+    ui->tableViewDevsSigs->setModel(listPropsTable);
     ui->treeView->setModel(listDevsTree);
     ui->treeView->expandAll();
+
+    popUpWind = new QWidget();
+
+    popUpContent = new QTreeView();
+    popUpContent->setModel(listDevsTree);
+    popUpContent->expandAll();
+    //popUpContent->setParent(popUpWind);
+
+    QGridLayout* layout = new QGridLayout();
+    layout->addWidget(popUpContent);
+    popUpWind->setLayout(layout);
+
+ //popUpWind->setLayout(new QGridLayout());
+
+    popUpWind->show();
+
+
+    QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
 }
 
 MainWindow::~MainWindow()
@@ -45,11 +61,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::syncTreeToTable()
 {
-    if ((listDevsTree == nullptr) || (listDevsTable == nullptr) )
+    if ((listDevsTree == nullptr) || (listPropsTable == nullptr) )
     {
         return;
     }
-    listDevsTable->clear();
+    listPropsTable->clear();
 
 
     for (int i=0; i<listDevsTree->rowCount(); ++i)
@@ -60,9 +76,16 @@ void MainWindow::syncTreeToTable()
         { //for each sig, we want a row with first column == dev name, second column == sig name
 
             //probably a terrible way of doing this. probably.
-            listDevsTable->setRowCount(listDevsTable->rowCount()+1);
-            listDevsTable->setItem(listDevsTable->rowCount()-1, 0, new QStandardItem(dev->text()));
-            listDevsTable->setItem(listDevsTable->rowCount()-1, 1, new QStandardItem(dev->child(j)->text()));
+            listPropsTable->setRowCount(listPropsTable->rowCount()+1);
+            listPropsTable->setItem(listPropsTable->rowCount()-1, 0, new QStandardItem(dev->text()));
+            listPropsTable->setItem(listPropsTable->rowCount()-1, 1, new QStandardItem(dev->child(j)->text()));
         }
     }
+}
+
+void MainWindow::selectedItem(QModelIndex model_idx)
+{
+    qDebug() << "selected item from treeview: " << model_idx;
+    listPropsTable->setHorizontalHeaderItem(0, new QStandardItem("Name"));
+    listPropsTable->setHorizontalHeaderItem(1, new QStandardItem("Value"));
 }

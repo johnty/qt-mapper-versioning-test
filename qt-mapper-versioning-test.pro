@@ -7,6 +7,7 @@
 QT          += core gui
 
 CONFIG      += c++11  #required by libmapper/lo
+CONFIG      += no_keywords #signals
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
