@@ -36,7 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeView->expandAll();
 
     popUpWind = new QWidget();
-
     popUpContent = new QTreeView();
     popUpContent->setModel(listDevsTree);
     popUpContent->expandAll();
@@ -48,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
  //popUpWind->setLayout(new QGridLayout());
 
-    popUpWind->show();
+    //popUpWind->show();
 
 
     QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
@@ -59,26 +58,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::syncTreeToTable()
+void MainWindow::syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table)
 {
-    if ((listDevsTree == nullptr) || (listPropsTable == nullptr) )
+    if ((tree == nullptr) || (table == nullptr) )
     {
         return;
     }
-    listPropsTable->clear();
+    table->clear();
 
-
-    for (int i=0; i<listDevsTree->rowCount(); ++i)
+    for (int i=0; i<tree->rowCount(); ++i)
     {
-        QStandardItem* dev = listDevsTree->item(i);
+        QStandardItem* dev = tree->item(i);
         qDebug() << "dev name = " << dev->text();
         for (int j=0; j<dev->rowCount(); j++)
         { //for each sig, we want a row with first column == dev name, second column == sig name
 
             //probably a terrible way of doing this. probably.
-            listPropsTable->setRowCount(listPropsTable->rowCount()+1);
-            listPropsTable->setItem(listPropsTable->rowCount()-1, 0, new QStandardItem(dev->text()));
-            listPropsTable->setItem(listPropsTable->rowCount()-1, 1, new QStandardItem(dev->child(j)->text()));
+            table->setRowCount(table->rowCount()+1);
+            table->setItem(table->rowCount()-1, 0, new QStandardItem(dev->text()));
+            table->setItem(table->rowCount()-1, 1, new QStandardItem(dev->child(j)->text()));
         }
     }
 }
@@ -88,4 +86,16 @@ void MainWindow::selectedItem(QModelIndex model_idx)
     qDebug() << "selected item from treeview: " << model_idx;
     listPropsTable->setHorizontalHeaderItem(0, new QStandardItem("Name"));
     listPropsTable->setHorizontalHeaderItem(1, new QStandardItem("Value"));
+}
+
+void MainWindow::on_tabMain_tabBarDoubleClicked(int index)
+{
+    if (index == ui->tabMain->indexOf(ui->tabDevs))
+    {
+        popUpWind->show();
+    }
+    else if (index == ui->tabMain->indexOf(ui->tabDB))
+    {
+
+    }
 }

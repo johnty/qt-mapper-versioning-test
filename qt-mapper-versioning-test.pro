@@ -33,8 +33,12 @@ win32 {
 
 
 SOURCES     += main.cpp\
-            mainwindow.cpp
+            mainwindow.cpp \
+    mapperdbthread.cpp \
+    testmapperdevice.cpp
 
-HEADERS     += mainwindow.h
+HEADERS     += mainwindow.h \
+    mapperdbthread.h \
+    testmapperdevice.h
 
 FORMS       += mainwindow.ui

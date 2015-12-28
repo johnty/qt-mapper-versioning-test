@@ -22,11 +22,14 @@ public:
 public Q_SLOTS:
     void selectedItem(QModelIndex model_idx);
 
+private Q_SLOTS:
+    void on_tabMain_tabBarDoubleClicked(int index);
+
 private:
     Ui::MainWindow *ui;
     QStandardItemModel *listDevsTree;
     QStandardItemModel *listPropsTable;
-    void syncTreeToTable();
+    void syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table);
 
     QWidget* popUpWind;
     QTreeView* popUpContent;
