@@ -20,7 +20,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="tabMain">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabDevs">
          <attribute name="title">
@@ -28,21 +28,50 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QTreeView" name="treeView"/>
+             <layout class="QHBoxLayout" name="viewsLayout">
+              <item>
+               <widget class="QTreeView" name="treeView"/>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Signal Props</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QTableView" name="tableViewDevsSigs"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
+             <layout class="QHBoxLayout" name="controlLayout">
               <item>
-               <widget class="QLabel" name="label">
+               <widget class="QPushButton" name="pushButtonLaunchTestDevs">
                 <property name="text">
-                 <string>Signal Props</string>
+                 <string>launch test devs</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QTableView" name="tableViewDevsSigs"/>
+               <widget class="QPushButton" name="pushButtonStopTestDevs">
+                <property name="text">
+                 <string>stop test devs</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_2">
+                <property name="text">
+                 <string>PushButton</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>

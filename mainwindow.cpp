@@ -56,6 +56,17 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+
+    while (testDevices.size())
+    {
+        testmapperdevice* dev = testDevices.back();
+        qDebug() <<"stopping dev " <<dev->
+        dev->stopRunning();
+        //wait until stopped
+        dev->wait();
+        delete dev;
+        testDevices.pop_back();
+    }
 }
 
 void MainWindow::syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table)
@@ -97,5 +108,22 @@ void MainWindow::on_tabMain_tabBarDoubleClicked(int index)
     else if (index == ui->tabMain->indexOf(ui->tabDB))
     {
 
+    }
+}
+
+void MainWindow::on_pushButtonLaunchTestDevs_clicked()
+{
+    createDevs();
+}
+
+void MainWindow::createDevs()
+{
+    for (int i=0; i<3; i++)
+    {
+        QString dev_name = "mydevice_"+QString::number(i);
+        int numIns = 1+3*(float)qrand()/RAND_MAX;
+        int numOuts = 1+3*(float)qrand()/RAND_MAX;
+        qDebug() <<"creating " << dev_name <<" with" << numIns<<"inputs and"<< numOuts<< "outputs";
+        testDevices.push_back(new testmapperdevice(numIns,numOuts,dev_name));
     }
 }

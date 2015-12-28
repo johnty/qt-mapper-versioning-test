@@ -18,7 +18,7 @@ testmapperdevice::testmapperdevice(int numinputs, int numoutputs, QString devnam
     }
     while (!myDevPtr->ready())
     {
-        myDevPtr->poll(500);
+        myDevPtr->poll(100);
         qDebug() <<"waiting for device " <<devname;
     }
     qDebug() <<"created device with name = " << myDevPtr->name().c_str();

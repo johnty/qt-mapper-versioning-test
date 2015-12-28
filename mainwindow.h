@@ -5,6 +5,7 @@
 #include <QStandardItemModel>
 #include <QTreeView>
 #include <QDebug>
+#include "testmapperdevice.h"
 
 
 namespace Ui {
@@ -25,12 +26,18 @@ public Q_SLOTS:
 private Q_SLOTS:
     void on_tabMain_tabBarDoubleClicked(int index);
 
+    void on_pushButtonLaunchTestDevs_clicked();
+
 private:
+
+    void createDevs();
+
     Ui::MainWindow *ui;
     QStandardItemModel *listDevsTree;
     QStandardItemModel *listPropsTable;
     void syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table);
 
+    std::vector<testmapperdevice*> testDevices;
     QWidget* popUpWind;
     QTreeView* popUpContent;
 };
