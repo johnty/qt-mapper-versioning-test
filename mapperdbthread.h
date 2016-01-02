@@ -28,6 +28,8 @@ public:
 private:
 
     mapper::Db db;
+
+    //TODO: should we use std containers or QT ones?
     std::vector<QString> devlist;
     std::vector<QString> outSigsList;
 

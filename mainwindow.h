@@ -4,8 +4,10 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QTreeView>
+#include <QTimer>
 #include <QDebug>
 #include "testmapperdevice.h"
+#include "mapperdbthread.h"
 
 
 namespace Ui {
@@ -28,6 +30,8 @@ private Q_SLOTS:
 
     void on_pushButtonLaunchTestDevs_clicked();
 
+    void refreshDB();
+
 private:
 
     void createDevs();
@@ -38,8 +42,11 @@ private:
     void syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table);
 
     std::vector<testmapperdevice*> testDevices;
+    mapperdbthread* myDB;
     QWidget* popUpWind;
     QTreeView* popUpContent;
+
+    QTimer* dbRefreshTimer; //TODO: ponder over whether the db refresh should be done by main UI (which then can update other models/views), or the mapperdbthread class...
 };
 
 #endif // MAINWINDOW_H

@@ -6,6 +6,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    myDB = new mapperdbthread();
+    myDB->start();
+
+    qDebug() <<"mapperDB thread started";
+
+
+    dbRefreshTimer = new QTimer();
+    connect(dbRefreshTimer, SIGNAL(timeout()), this, SLOT(refreshDB()));
+
+    dbRefreshTimer->start(1000); //update once per second
+
     //QStringList testList;
     //testList.append("device 1");
     //testList.append("device 2");
@@ -57,10 +69,17 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
+    myDB->stopThread();
+    myDB->wait();
+    qDebug() <<"db thread stopped";
+    delete myDB;
+
+    delete dbRefreshTimer;
+
     while (testDevices.size())
     {
         testmapperdevice* dev = testDevices.back();
-        qDebug() <<"stopping dev " <<dev->
+        qDebug() <<"stopping dev " <<dev->getDevName();
         dev->stopRunning();
         //wait until stopped
         dev->wait();
@@ -118,12 +137,31 @@ void MainWindow::on_pushButtonLaunchTestDevs_clicked()
 
 void MainWindow::createDevs()
 {
-    for (int i=0; i<3; i++)
+    for (int i=0; i<2; i++)
     {
         QString dev_name = "mydevice_"+QString::number(i);
         int numIns = 1+3*(float)qrand()/RAND_MAX;
         int numOuts = 1+3*(float)qrand()/RAND_MAX;
         qDebug() <<"creating " << dev_name <<" with" << numIns<<"inputs and"<< numOuts<< "outputs";
-        testDevices.push_back(new testmapperdevice(numIns,numOuts,dev_name));
+        testmapperdevice* newdev = new testmapperdevice(numIns,numOuts,dev_name);
+        newdev->start(); //note: we have to start it so it will update (and hence showup in db, etc...)
+        testDevices.push_back(newdev);
+    }
+}
+
+void MainWindow::refreshDB()
+{
+    qDebug() <<"refreshing DB...";
+
+    for (auto devname : myDB->getDeviceList())
+    {
+        qDebug() << "dev registered: " << devname;
+    }
+    return;
+
+    std::vector<QString> listDevs = myDB->getDeviceList();
+    for (int i=0; i<listDevs.size(); ++i)
+    {
+        qDebug() << listDevs.at(i);
     }
 }

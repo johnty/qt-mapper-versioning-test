@@ -21,6 +21,7 @@ public:
     testmapperdevice(int numinputs, int numoutputs, QString devname);
     ~testmapperdevice();
     void addSignal(SignalType type);
+    QString getDevName();
 
     void stopRunning();
 
