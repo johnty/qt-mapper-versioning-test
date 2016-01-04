@@ -32,9 +32,12 @@ private Q_SLOTS:
 
     void refreshDB();
 
+    void on_pushButtonStopTestDevs_clicked();
+
 private:
 
-    void createDevs();
+    void createAndStartTestDevs();
+    void stopAndDeleteTestDevs();
 
     Ui::MainWindow *ui;
     QStandardItemModel *listDevsTree;
@@ -45,6 +48,9 @@ private:
     mapperdbthread* myDB;
     QWidget* popUpWind;
     QTreeView* popUpContent;
+
+    // for keeping track of last selected index in model
+    QModelIndex lastIndex;
 
     QTimer* dbRefreshTimer; //TODO: ponder over whether the db refresh should be done by main UI (which then can update other models/views), or the mapperdbthread class...
 };

@@ -60,8 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
  //popUpWind->setLayout(new QGridLayout());
 
     //popUpWind->show();
-
-
     QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
 }
 
@@ -76,16 +74,7 @@ MainWindow::~MainWindow()
 
     delete dbRefreshTimer;
 
-    while (testDevices.size())
-    {
-        testmapperdevice* dev = testDevices.back();
-        qDebug() <<"stopping dev " <<dev->getDevName();
-        dev->stopRunning();
-        //wait until stopped
-        dev->wait();
-        delete dev;
-        testDevices.pop_back();
-    }
+    stopAndDeleteTestDevs();
 }
 
 void MainWindow::syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table)
@@ -132,14 +121,14 @@ void MainWindow::on_tabMain_tabBarDoubleClicked(int index)
 
 void MainWindow::on_pushButtonLaunchTestDevs_clicked()
 {
-    createDevs();
+    createAndStartTestDevs();
 }
 
-void MainWindow::createDevs()
+void MainWindow::createAndStartTestDevs()
 {
     for (int i=0; i<2; i++)
     {
-        QString dev_name = "mydevice_"+QString::number(i);
+        QString dev_name = "Device_"+QString::number(i+1);
         int numIns = 1+3*(float)qrand()/RAND_MAX;
         int numOuts = 1+3*(float)qrand()/RAND_MAX;
         qDebug() <<"creating " << dev_name <<" with" << numIns<<"inputs and"<< numOuts<< "outputs";
@@ -152,16 +141,68 @@ void MainWindow::createDevs()
 void MainWindow::refreshDB()
 {
     qDebug() <<"refreshing DB...";
+    std::vector<QString> devList = myDB->getDeviceList();
 
-    for (auto devname : myDB->getDeviceList())
+    if (devList.size() != listDevsTree->rowCount())
     {
-        qDebug() << "dev registered: " << devname;
+
+        qDebug() << "numDevs changed; refreshing tree";
+
+        listDevsTree->clear();
+        listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
+        for (auto devname : devList)
+        {
+            //for each device
+            QStandardItem* dev = new QStandardItem(devname);
+            //listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
+
+            //add signals to dev
+            for (int i=0; i< myDB->getSigList(devname).size(); i++)
+            {
+                qDebug() <<"from DB: dev = "<<devname<<"  sig = " << myDB->getSigList(devname).at(i);
+                dev->appendRow(new QStandardItem(myDB->getSigList(devname).at(i)));
+            }
+
+            //add device to list (at root level)
+            QStandardItem* rootItem = listDevsTree->invisibleRootItem();
+            rootItem->appendRow(dev);
+
+            qDebug() << "dev registered: " << devname;
+        }
+        //note: there isn't a super elegant way to keep tree
+        //open exactly the way we had between updates, unless we
+        // a.) "double buffer" the model and only refresh when changed
+        // b.) keep track of treeview status, and reset it every time
+        // c.) something else?
+        // for now, just leave it in expanded mode...
+        ui->treeView->expandAll();
     }
+
     return;
+
 
     std::vector<QString> listDevs = myDB->getDeviceList();
     for (int i=0; i<listDevs.size(); ++i)
     {
         qDebug() << listDevs.at(i);
+    }
+}
+
+void MainWindow::on_pushButtonStopTestDevs_clicked()
+{
+    stopAndDeleteTestDevs();
+}
+
+void MainWindow::stopAndDeleteTestDevs()
+{
+    while (testDevices.size())
+    {
+        testmapperdevice* dev = testDevices.back();
+        qDebug() <<"stopping dev " <<dev->getDevName();
+        dev->stopRunning();
+        //wait until stopped
+        dev->wait();
+        delete dev;
+        testDevices.pop_back();
     }
 }
