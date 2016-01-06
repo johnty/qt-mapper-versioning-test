@@ -1,6 +1,7 @@
 #include "listtab.h"
 #include <math.h>
 #include <QSplitter>
+#include <QDebug>
 
 //ListTab::ListTab(QTabWidget *parent, mapperGUIData _data) : Tab(parent, _data)
 ListTab::ListTab(QTabWidget *parent)
@@ -43,6 +44,37 @@ ListTab::ListTab(QTabWidget *parent)
 ListTab::~ListTab()
 {
     ;
+}
+
+void ListTab::deviceEvent(mapper::Db *db)
+{
+    qDebug() << "addDevice to ListTab";
+    sources->clear();
+    destinations->clear();
+    for (auto const &device : db->devices())
+    {
+
+        if (device.num_signals(MAPPER_DIR_INCOMING) > 0)
+        {
+            destinations->addDevice(0, &device);
+            for (auto const &sig : device.signals(MAPPER_DIR_INCOMING))
+            {
+                destinations->addSignal(0, &sig);
+            }
+        }
+        if (device.num_signals(MAPPER_DIR_OUTGOING) > 0)
+        {
+            sources->addDevice(0, &device);
+            for (auto const &sig : device.signals(MAPPER_DIR_OUTGOING))
+            {
+                sources->addSignal(0, &sig);
+            }
+
+        }
+    }
+    sources->expand();
+    destinations->expand();
+
 }
 
 void ListTab::deviceEvent()

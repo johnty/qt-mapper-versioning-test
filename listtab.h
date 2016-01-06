@@ -24,6 +24,8 @@ public:
     void deviceEvent();
     void linkEvent();
 
+    void deviceEvent(mapper::Db *db);
+
 private:
     ConnectionProps *props;
     SignalList *sources;

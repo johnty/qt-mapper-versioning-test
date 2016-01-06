@@ -17,8 +17,9 @@ public:
     ~SignalList();
 
     void clear();
-    int addDevice(int index, mapper::Device* dev);
-    void addSignal(int parentindex, mapper::Signal* sig);
+    int addDevice(int index, const mapper::Device* dev);
+    void addSignal(int parentindex, const mapper::Signal* sig);
+    void expand();
 
 private:
     Ui::SignalList *ui;

@@ -20,7 +20,7 @@ void SignalList::clear()
     ui->tree->clear();
 }
 
-int SignalList::addDevice(int index, mapper::Device* dev)
+int SignalList::addDevice(int index, const mapper::Device* dev)
 {
     QTreeWidgetItem *qdev = new QTreeWidgetItem((QTreeWidget*)0,
                                                 QStringList(QString(dev->name().c_str())));
@@ -28,7 +28,7 @@ int SignalList::addDevice(int index, mapper::Device* dev)
     return ui->tree->indexOfTopLevelItem(qdev);
 }
 
-void SignalList::addSignal(int parentindex, mapper::Signal* sig)
+void SignalList::addSignal(int parentindex, const mapper::Signal* sig)
 {
     QTreeWidgetItem *qdev = ui->tree->topLevelItem(parentindex);
 
@@ -37,4 +37,10 @@ void SignalList::addSignal(int parentindex, mapper::Signal* sig)
     qsig->setText(1, QString(QChar(sig->type())));
     qsig->setText(2, QString::number(sig->length()));
     qdev->addChild(qsig);
+}
+
+
+void SignalList::expand()
+{
+    ui->tree->expandAll();
 }

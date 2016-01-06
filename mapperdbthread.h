@@ -25,6 +25,9 @@ public:
 
     void makeMap(QString sdev, QString ddev, QString ssig, QString dsig);
 
+    //TODO: rethink this kind of access, as well as similarly poor life choices
+    mapper::Db* getDB() { return &db;}
+
 private:
 
     mapper::Db db;

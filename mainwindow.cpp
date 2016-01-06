@@ -184,6 +184,10 @@ void MainWindow::refreshDB()
         // c.) something else?
         // for now, just leave it in expanded mode...
         ui->treeView->expandAll();
+
+        //update the mapping view
+        mySigListViewTab->deviceEvent(myDB->getDB());
+
     }
 
     return;

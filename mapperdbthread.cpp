@@ -44,7 +44,7 @@ const std::vector<QString> mapperdbthread::getDeviceList()
     for (auto const &device : db.devices())
     {
         QString devname((const char*)device.property("name"));
-        list.push_back(devname);
+        list.push_back(devname);        
     }
     myLock.unlock();
     return list;
