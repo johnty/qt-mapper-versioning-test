@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>491</height>
+    <width>787</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="tabMain">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabDevs">
          <attribute name="title">
@@ -79,15 +79,15 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tabDB">
-         <attribute name="title">
-          <string>db out</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="tabMapper">
+        <widget class="QWidget" name="tabMapperMain">
          <attribute name="title">
           <string>mapping</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QTabWidget" name="tabMapperView"/>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tabVersions">
          <attribute name="title">
@@ -105,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>626</width>
+     <width>787</width>
      <height>22</height>
     </rect>
    </property>

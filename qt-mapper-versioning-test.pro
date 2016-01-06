@@ -35,10 +35,23 @@ win32 {
 SOURCES     += main.cpp\
             mainwindow.cpp \
     mapperdbthread.cpp \
-    testmapperdevice.cpp
+    testmapperdevice.cpp \
+    linkview.cpp \
+    signallist.cpp \
+    listtab.cpp \
+    tab.cpp \
+    connectionprops.cpp
 
 HEADERS     += mainwindow.h \
     mapperdbthread.h \
-    testmapperdevice.h
+    testmapperdevice.h \
+    linkview.h \
+    signallist.h \
+    listtab.h \
+    tab.h \
+    connectionprops.h
 
-FORMS       += mainwindow.ui
+FORMS       += mainwindow.ui \
+    linkview.ui \
+    signallist.ui \
+    connectionprops.ui

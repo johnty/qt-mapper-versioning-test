@@ -8,6 +8,7 @@
 #include <QDebug>
 #include "testmapperdevice.h"
 #include "mapperdbthread.h"
+#include "listtab.h"
 
 
 namespace Ui {
@@ -48,6 +49,10 @@ private:
     mapperdbthread* myDB;
     QWidget* popUpWind;
     QTreeView* popUpContent;
+
+    //signal list tab
+    ListTab* mySigListViewTab;
+    QWidget* myOtherViewtab; //placeholder for another mapping view
 
     // for keeping track of last selected index in model
     QModelIndex lastIndex;

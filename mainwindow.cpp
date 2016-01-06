@@ -53,12 +53,20 @@ MainWindow::MainWindow(QWidget *parent) :
     popUpContent->expandAll();
     //popUpContent->setParent(popUpWind);
 
+
+    //init the list tab
+
+    mySigListViewTab = new ListTab(ui->tabMapperView);
+    ui->tabMapperView->setTabText(0, "List View");
+
+    myOtherViewtab = new QWidget(ui->tabMapperView);
+    ui->tabMapperView->setTabText(1, "Other View");
+
+
     QGridLayout* layout = new QGridLayout();
     layout->addWidget(popUpContent);
+    //layout->addWidget(ui->tabDevs);
     popUpWind->setLayout(layout);
-
- //popUpWind->setLayout(new QGridLayout());
-
     //popUpWind->show();
     QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
 }
@@ -113,7 +121,7 @@ void MainWindow::on_tabMain_tabBarDoubleClicked(int index)
     {
         popUpWind->show();
     }
-    else if (index == ui->tabMain->indexOf(ui->tabDB))
+    else if (index == ui->tabMain->indexOf(ui->tabMapperMain))
     {
 
     }
