@@ -59,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mySigListViewTab = new ListTab(ui->tabMapperView);
     ui->tabMapperView->setTabText(0, "List View");
 
+    //QObject::connect(ui->tabMapperView, SIGNAL(on) )
+
     myOtherViewtab = new QWidget(ui->tabMapperView);
     ui->tabMapperView->setTabText(1, "Other View");
 
@@ -69,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     popUpWind->setLayout(layout);
     //popUpWind->show();
     QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
+
 }
 
 MainWindow::~MainWindow()

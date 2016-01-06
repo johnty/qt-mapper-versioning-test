@@ -1,5 +1,6 @@
 #include "signallist.h"
 #include "ui_signallist.h"
+#include <QDebug>
 
 SignalList::SignalList(QWidget *parent, const char *_label, int _is_src) :
     QWidget(parent),
@@ -43,4 +44,30 @@ void SignalList::addSignal(int parentindex, const mapper::Signal* sig)
 void SignalList::expand()
 {
     ui->tree->expandAll();
+}
+
+void SignalList::on_tree_clicked(const QModelIndex &index)
+{
+    //qDebug() <<"sig tree clicked row = " << index.row() << " col = " << index.column();
+    qDebug() << "currItem = " << ui->tree->currentItem()->text(0);
+    if (!ui->tree->currentItem()->childCount())
+    {
+        //we've clicked on a signal
+        //better ways to determine this?
+        //
+        QString signame = ui->tree->currentItem()->text(0);
+        QString devname = ui->tree->currentItem()->parent()->text(0);
+        qDebug() << "dev = " <<devname <<" sig = " <<signame;
+        selected_dev = devname;
+        selected_sig = signame;
+        Q_EMIT signalSelected(devname, signame); //if we keep track of these, we could simply call getters instead
+    }
+    else
+    {
+        qDebug() <<"is dev";
+        selected_dev = "";
+        selected_sig = "";
+        Q_EMIT signalSelected("", "");
+    }
+
 }

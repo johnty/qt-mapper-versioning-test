@@ -39,6 +39,15 @@ ListTab::ListTab(QTabWidget *parent)
     listLayout->setStretch(0, 2);
     listLayout->setStretch(1, 1);
     listLayout->setStretch(2, 2);
+
+    QObject::connect(sources, SIGNAL(signalSelected(QString,QString)), this, SLOT(SigSelected(QString,QString)));
+    QObject::connect(destinations, SIGNAL(signalSelected(QString,QString)), this, SLOT(SigSelected(QString,QString)));
+    QObject::connect(links, SIGNAL(sendMapBtn()), this, SLOT(mapBtnClicked()));
+
+    srcSelected = false;
+    dstSelected = false;
+    links->enableMapBtn(false);
+
 }
 
 ListTab::~ListTab()
@@ -107,6 +116,11 @@ void ListTab::deviceEvent()
 //        }
 //        pdev = mapper_db_device_next(pdev);
 //    }
+}
+
+void ListTab::linkEvent(mapper::Db *db)
+{
+    qDebug()<< "Listtab: linkevent";
 }
 
 void ListTab::linkEvent()
@@ -190,4 +204,48 @@ void ListTab::linkEvent()
 void ListTab::update()
 {
     ;
+}
+
+void ListTab::SigSelected(QString dev, QString sig)
+{
+    if (QObject::sender() == sources) {
+        qDebug() << "ListTab Sig Src" << dev <<":"<<sig;
+        if (dev == "" || sig == "")
+        {
+            srcSelected = false;
+        }
+        else
+        {
+            srcSelected = true;
+        }
+
+
+    }
+    else {
+        qDebug() << "ListTab Sig Dst:" << dev <<":"<<sig;
+        if (dev == "" || sig == "")
+        {
+            dstSelected = false;
+        }
+        else
+        {
+            dstSelected = true;
+        }
+    }
+
+
+    links->enableMapBtn(dstSelected && srcSelected);
+}
+
+void ListTab::mapBtnClicked()
+{
+    QString src_dev = sources->getSelectedDev();
+    QString src_sig = sources->getSelectedSig();
+    QString dst_dev = destinations->getSelectedDev();
+    QString dst_sig = destinations->getSelectedSig();
+    qDebug() <<"ListTab: mapping from " << src_dev<< ":" << src_sig << "to"
+                                        << dst_dev<< ":" << dst_sig;
+
+    links->addLink(-10,10);
+
 }

@@ -13,7 +13,7 @@
 
 class ListTab : public Tab
 {
-//    Q_OBJECT
+    Q_OBJECT
 
 public:
     //ListTab(QTabWidget *parent, mapperGUIData data);
@@ -25,8 +25,15 @@ public:
     void linkEvent();
 
     void deviceEvent(mapper::Db *db);
+    void linkEvent(mapper::Db *db);
+
+public Q_SLOTS:
+    void SigSelected(QString dev, QString sig);
+    void mapBtnClicked();
 
 private:
+    bool srcSelected;
+    bool dstSelected;
     ConnectionProps *props;
     SignalList *sources;
     SignalList *destinations;

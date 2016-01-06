@@ -18,6 +18,15 @@ public:
 
     void clear();
     void addLink(int offsetL, int offsetR, int direction=0);
+    void drawTest();
+
+    void enableMapBtn(bool enabled);
+
+Q_SIGNALS:
+    void sendMapBtn();
+
+private Q_SLOTS:
+    void on_pushButtonMap_clicked();
 
 private:
     Ui::LinkView *ui;
