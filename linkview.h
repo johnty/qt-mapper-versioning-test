@@ -16,9 +16,12 @@ public:
     explicit LinkView(QWidget *parent = 0);
     ~LinkView();
 
+    void setRowHeight(int rowH) {row_height = rowH;}
     void clear();
-    void addLink(int offsetL, int offsetR, int direction=0);
+    void addLink(int offsetL, int offsetR, int direction);
+    void addLink(int rowFrom, int rowTo);
     void drawTest();
+    void paintEvent(QPaintEvent* e);
 
     void enableMapBtn(bool enabled);
 
@@ -31,6 +34,7 @@ private Q_SLOTS:
 private:
     Ui::LinkView *ui;
     QGraphicsScene *scene;
+    int row_height;
 };
 
 #endif // LINKVIEW_H

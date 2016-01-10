@@ -40,6 +40,7 @@ ListTab::ListTab(QTabWidget *parent)
     listLayout->setStretch(1, 1);
     listLayout->setStretch(2, 2);
 
+
     QObject::connect(sources, SIGNAL(signalSelected(QString,QString)), this, SLOT(SigSelected(QString,QString)));
     QObject::connect(destinations, SIGNAL(signalSelected(QString,QString)), this, SLOT(SigSelected(QString,QString)));
     QObject::connect(links, SIGNAL(sendMapBtn()), this, SLOT(mapBtnClicked()));
@@ -68,7 +69,7 @@ void ListTab::deviceEvent(mapper::Db *db)
             destinations->addDevice(0, &device);
             for (auto const &sig : device.signals(MAPPER_DIR_INCOMING))
             {
-                destinations->addSignal(0, &sig);
+                destinations->addSignal(0, &sig, device.name().c_str());
             }
         }
         if (device.num_signals(MAPPER_DIR_OUTGOING) > 0)
@@ -76,7 +77,7 @@ void ListTab::deviceEvent(mapper::Db *db)
             sources->addDevice(0, &device);
             for (auto const &sig : device.signals(MAPPER_DIR_OUTGOING))
             {
-                sources->addSignal(0, &sig);
+                sources->addSignal(0, &sig, device.name().c_str());
             }
 
         }
@@ -246,6 +247,7 @@ void ListTab::mapBtnClicked()
     qDebug() <<"ListTab: mapping from " << src_dev<< ":" << src_sig << "to"
                                         << dst_dev<< ":" << dst_sig;
 
+    //TODO: scroll behavior
     links->addLink(-10,10);
 
 }
