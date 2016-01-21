@@ -10,6 +10,9 @@
 #include "mapperdbthread.h"
 #include "listtab.h"
 
+#include "mapperUI/qmapperdbscene.h"
+#include "mapperUI/qmapperdbmodel.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -52,7 +55,13 @@ private:
 
     //signal list tab
     ListTab* mySigListViewTab;
-    QWidget* myOtherViewtab; //placeholder for another mapping view
+
+    QTabWidget* myOtherViewtab; //placeholder for another mapping view
+    QGraphicsView *graphicsView;
+    QMapperDbScene *mapperScene;
+
+    QMapperDbModel *mapperSceneDbModel;
+
 
     // for keeping track of last selected index in model
     QModelIndex lastIndex;

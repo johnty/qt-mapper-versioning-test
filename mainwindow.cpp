@@ -61,8 +61,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //QObject::connect(ui->tabMapperView, SIGNAL(on) )
 
-    myOtherViewtab = new QWidget(ui->tabMapperView);
-    ui->tabMapperView->setTabText(1, "Other View");
+    myOtherViewtab = new QTabWidget();
+    ui->tabMapperView->addTab(myOtherViewtab, "Signals View");
+    ui->tabMapperView->setCurrentIndex(1);
+
+    QGridLayout *otherLayout = new QGridLayout(myOtherViewtab);
+
+    graphicsView = new QGraphicsView();
+    otherLayout->addWidget(graphicsView);
+    mapperScene = new QMapperDbScene(this);
+    graphicsView->setScene(mapperScene);
+    mapperScene->setSceneRect(graphicsView->rect());
+
+    //ui->tabMapperView->setTabText(1, "Other View");
+
+    mapperSceneDbModel = new QMapperDbModel();
+    mapperSceneDbModel->LoadFromTest();
+
+    mapperScene->setMapperDbModel(mapperSceneDbModel);
+    mapperScene->updateScene();
+
+
+
 
 
     QGridLayout* layout = new QGridLayout();
