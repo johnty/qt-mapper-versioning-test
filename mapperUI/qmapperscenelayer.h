@@ -56,7 +56,7 @@ private:
     std::vector<QPointF> mapSrcs;
     std::vector<QPointF> mapDsts;
 
-    std::vector<int> mapSrcIdxs;
+    std::vector<int> mapSrcIdxs; //NOTE: this need to be cleared when reloading as well!!!!
     std::vector<int> mapDstIdxs;
 
     QGraphicsItemGroup myGraphicsItems;

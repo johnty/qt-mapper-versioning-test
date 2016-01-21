@@ -48,6 +48,7 @@ public Q_SLOTS:
     void mouseDragged(QPointF src_pos, QPointF drag_pos);
     void devsigMoved();
     void mouseDoubleClicked();
+    void dpUpdated(); //from mapper db interface
 
 private:
     //find index of item within square hitbox of certain length

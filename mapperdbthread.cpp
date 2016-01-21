@@ -138,3 +138,34 @@ void mapperdbthread::devActionHandler(mapper_device dev,
 
 }
 
+void mapperdbthread::syncRenderModel(QMapperDbModel *modelToSync)
+{
+    modelToSync->clearAll();
+
+    //For now, we're really just interested in the flat signals view, so thats what we do...
+    // for whatever's sake, we do a complete query of the db so really this is not a sync as a complete
+    // poll, (clean this up once we have callbacks, and world peace...)
+    myLock.lock();
+    for (auto const &device : db.devices())
+    {
+        QString dev_name((const char*)device.property("name"));
+        modelToSync->addDevice(dev_name);
+        mapper::Signal::Query qry = device.signals(MAPPER_DIR_INCOMING);
+        for (; qry != qry.end(); qry++)
+        {
+            mapper::Signal sig = *qry;
+            QString sig_name = sig.name().c_str();
+            modelToSync->addSignal(dev_name, sig_name, true );
+        }
+
+        mapper::Signal::Query qry2 = device.signals(MAPPER_DIR_OUTGOING);
+        for (; qry2 != qry2.end(); qry2++)
+        {
+            mapper::Signal sig = *qry2;
+            QString sig_name = sig.name().c_str();
+            modelToSync->addSignal(dev_name, sig_name, false );
+        }
+
+    }
+    myLock.unlock();
+}

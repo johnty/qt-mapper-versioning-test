@@ -80,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mapperScene->setMapperDbModel(mapperSceneDbModel);
     mapperScene->updateScene();
+    QObject::connect(this, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
 
 
 
@@ -176,7 +177,6 @@ void MainWindow::refreshDB()
 
     if (devList.size() != listDevsTree->rowCount())
     {
-
         qDebug() << "numDevs changed; refreshing tree";
 
         listDevsTree->clear();
@@ -210,6 +210,13 @@ void MainWindow::refreshDB()
 
         //update the mapping view
         mySigListViewTab->deviceEvent(myDB->getDB());
+
+//REMINDER: this only happens when number of devices change, which is not ideal...
+// we should do more in depth comparisons, or better yet hook up signal handlers to the instance of the class
+        // another alternative hacky but better way may be tor
+
+        myDB->syncRenderModel(mapperSceneDbModel); //update the data
+        Q_EMIT dBUpdateSig();    //trigger render
 
     }
 

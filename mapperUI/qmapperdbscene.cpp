@@ -61,6 +61,10 @@ void QMapperDbScene::mouseDropped(QPointF src, QPointF dst)
     int srcIdx = getIndexOfSigNear(src, 10);
     int dstIdx = getIndexOfSigNear(dst_mod, 10);
     qDebug() << "make map from " << srcIdx <<" to " <<dstIdx;
+
+    return;
+    //code below is for testing drawing; we actually want to emit
+    //mapper db commands here...
     if ( (srcIdx != -1) & (dstIdx != -1) )
     {
         if (srcIdx != dstIdx) {// one more
@@ -286,6 +290,10 @@ void QMapperDbScene::updateScene()
             delete sigs.at(sigs.size()-1);
             sigs.pop_back();
         }
+        //clear map indicies
+        mapSrcIdxs.clear();
+        mapDstIdxs.clear();
+        //remove math drawing path objects
         removeMapPaths();
         removeItem(&tempPathItem);//note: find way to avoid this bit
         clear(); //probably won't need this since we've manually removed everything...
@@ -398,4 +406,10 @@ void QMapperDbScene::devsigMoved()
 void QMapperDbScene::setAlpha(int alpha)
 {
     setForegroundBrush(QColor(255, 255, 255, alpha));
+}
+
+void QMapperDbScene::dpUpdated()
+{
+    qDebug() <<"db scene: attached db updated.";
+    updateScene();
 }

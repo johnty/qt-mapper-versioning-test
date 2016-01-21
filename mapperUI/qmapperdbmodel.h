@@ -26,6 +26,8 @@ public:
         return mapperSignals.size();
     }
 
+    void clearAll();
+
     const QStandardItem* getSigItem(int index) {return mapperSignals.at(index);}
     const QString getSigName(int idx);
     const QString getSigDevName(int idx);
@@ -34,6 +36,8 @@ public:
     const QVector<int>& getMapSrcs() { return mapperMapsSrc;}
     const QVector<int>& getMapDsts() { return mapperMapsDst;}
 
+    void addDevice(QString devName);
+    void addSignal(QString devName, QString sigName, bool isInput);
 private:
 
     //TODO: more organized data structures

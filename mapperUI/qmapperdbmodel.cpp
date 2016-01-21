@@ -5,6 +5,26 @@ QMapperDbModel::QMapperDbModel()
 
 }
 
+void QMapperDbModel::addDevice(QString devName)
+{
+    mapperDevNames.append(devName);
+}
+
+void QMapperDbModel::addSignal(QString devName, QString sigName, bool isInput)
+{
+    qDebug()<<"DbModel addsig" <<devName<<":"<<sigName<<":"<<isInput;
+    QStandardItem* newSig = new QStandardItem(sigName);
+
+    newSig->insertRow(0, new QStandardItem(devName));
+    if (isInput)
+        newSig->insertRow(1, new QStandardItem("input"));
+    else
+        newSig->insertRow(1, new QStandardItem("output"));
+
+    mapperSignals.append(newSig);
+
+}
+
 void QMapperDbModel::LoadFromTest(int testDB)
 {
     //make some devices with sigs
@@ -91,4 +111,13 @@ const QString QMapperDbModel::getSigDevName(int idx)
 const bool QMapperDbModel::isOutputSig(int idx)
 {
     return (mapperSignals.at(idx)->child(1)->text() == "output");
+}
+
+void QMapperDbModel::clearAll()
+{
+    mapperDevNames.clear();
+    mapperSignals.clear();
+    mapperMapsDst.clear();
+    mapperMapsSrc.clear();
+
 }

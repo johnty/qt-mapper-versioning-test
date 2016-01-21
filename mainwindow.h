@@ -38,6 +38,9 @@ private Q_SLOTS:
 
     void on_pushButtonStopTestDevs_clicked();
 
+Q_SIGNALS:
+    void dBUpdateSig();
+
 private:
 
     void createAndStartTestDevs();

@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QDebug>
 #include <mapper/mapper_cpp.h>
+#include "mapperUI/qmapperdbmodel.h"
 
 
 class mapperdbthread : public QThread
@@ -23,6 +24,7 @@ public:
 
     void run();
     void stopThread();
+    void syncRenderModel(QMapperDbModel* modelToSync);
 
     bool keepGoing;
 
@@ -36,10 +38,16 @@ public:
     //TODO: rethink this kind of access, as well as similarly poor life choices
     mapper::Db* getDB() { return &db;}
 
+Q_SIGNALS:
+    void devUpdatedSig();
+    void mapUpdatedSig();
+
 
 public Q_SLOTS:
 
+    //TODO: hook up this callback properly, along with map events...
     void devEvent(mapper_device dev, mapper_record_action action);
+
 
 private:
 
@@ -50,6 +58,7 @@ private:
     std::vector<QString> outSigsList;
 
     std::vector<mapper::Map*> myMaps;
+    QMapperDbModel * myDbRenderModel;
 
 };
 
