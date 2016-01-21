@@ -2,7 +2,7 @@
 
 mapperdbthread::mapperdbthread() :db(MAPPER_SUBSCRIBE_ALL)
 {
-
+    db.add_device_callback(devActionHandler, nullptr);
 }
 
 void mapperdbthread::run()
@@ -105,3 +105,36 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
     myMaps.push_back(map);
 
 }
+
+
+void mapperdbthread::devEvent(mapper_device dev, mapper_record_action action)
+{
+
+}
+
+void mapperdbthread::devActionHandler(mapper_device dev,
+                            mapper_record_action action,
+                            const void *user)
+{
+    QString actionStr;
+    switch (action) {
+    case MAPPER_ADDED:
+        actionStr = "Added";
+        break;
+    case MAPPER_MODIFIED:
+        actionStr = "modified";
+        break;
+    case MAPPER_REMOVED:
+        actionStr = "removed";
+        break;
+    case MAPPER_EXPIRED:
+        actionStr = "unresponsive";
+        //mapper_db_flush(db, 10, 0);
+        break;
+    }
+
+    qDebug() << "devAction from " << mapper_device_name(dev) << " Action = "
+                 << actionStr;
+
+}
+

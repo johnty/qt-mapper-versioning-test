@@ -40,7 +40,11 @@ SOURCES     += main.cpp\
     signallist.cpp \
     listtab.cpp \
     tab.cpp \
-    connectionprops.cpp
+    connectionprops.cpp \
+    mapperUI/customrect.cpp \
+    mapperUI/qmapperdbmodel.cpp \
+    mapperUI/qmapperdbscene.cpp \
+    mapperUI/qmapperscenelayer.cpp
 
 HEADERS     += mainwindow.h \
     mapperdbthread.h \
@@ -49,7 +53,11 @@ HEADERS     += mainwindow.h \
     signallist.h \
     listtab.h \
     tab.h \
-    connectionprops.h
+    connectionprops.h \
+    mapperUI/customrect.h \
+    mapperUI/qmapperdbmodel.h \
+    mapperUI/qmapperdbscene.h \
+    mapperUI/qmapperscenelayer.h
 
 FORMS       += mainwindow.ui \
     linkview.ui \
