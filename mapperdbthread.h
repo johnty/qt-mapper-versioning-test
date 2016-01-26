@@ -10,17 +10,34 @@
 
 class mapperdbthread : public QThread
 {
+
+    Q_OBJECT
+
 public:
     mapperdbthread();
     ~mapperdbthread();
 
-    //this mechanism needs some reworking since
+    // TODO: this mechanism needs some reworking since
     // we can't emit signals from static function...
-    // function/bind might be a solution? for now
-    // just use polled version... not as efficient but works.
+    // function/bind might be a solution? [update: probably not] for now
+    // we have a wonderful hack where
+    // 1.) we assume there is only one instance of this class
+    // 2.) we hold a static pointer of that instance
+    // 3.) we call the instance's action handler
+    //
+    //
+    // based on whats been tried so far, what makes the most sense
+    // is to rework this class at some point, and have a single point
+    // of entry to whatever object holding instance(s) that need to get
+    // updates from here, and *don't mix QObject stuff* into this db interface class
+    //
+
     static void devActionHandler(mapper_device dev,
                                  mapper_record_action action,
                                  const void *user);
+
+    void devActionFn(mapper_device dev,
+                     mapper_record_action action);
 
     void run();
     void stopThread();
@@ -59,6 +76,10 @@ private:
 
     std::vector<mapper::Map*> myMaps;
     QMapperDbModel * myDbRenderModel;
+
+//    fn pointers to callback methods
+    //note: in c++11 we can init to NULL here, pre-c++11 we can't!
+    void (mapperdbthread::*ptrDevAction)(mapper_device dev, mapper_record_action action) = NULL;
 
 };
 

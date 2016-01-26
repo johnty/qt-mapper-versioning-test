@@ -1,8 +1,21 @@
 #include "mapperdbthread.h"
 
+mapperdbthread* FIX_ME;
+
 mapperdbthread::mapperdbthread() :db(MAPPER_SUBSCRIBE_ALL)
 {
     db.add_device_callback(devActionHandler, nullptr);
+
+    //set up callback fn ptrs
+    //note: so apparently its a bad idea
+    // to try and bind a signal callback to
+    // an instance of a class
+    //  (https://isocpp.org/wiki/faq/pointers-to-members#memfnptr-vs-fnptr)
+    // so once we have some time we should re-look how
+    // the db model interacts with QT objects (main limitation being
+    // we cannot emit QT signals directly from static functions).
+    ptrDevAction = &mapperdbthread::devActionFn;
+    FIX_ME = this;
 }
 
 void mapperdbthread::run()
@@ -112,6 +125,12 @@ void mapperdbthread::devEvent(mapper_device dev, mapper_record_action action)
 
 }
 
+void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
+{
+    qDebug() <<"instance devAction";
+    Q_EMIT devUpdatedSig(); //we can't do this from the static handler below...
+}
+
 void mapperdbthread::devActionHandler(mapper_device dev,
                             mapper_record_action action,
                             const void *user)
@@ -132,6 +151,9 @@ void mapperdbthread::devActionHandler(mapper_device dev,
         //mapper_db_flush(db, 10, 0);
         break;
     }
+
+    //(*ptrDevAction)(dev, action);
+    FIX_ME->devActionFn(dev, action);
 
     qDebug() << "devAction from " << mapper_device_name(dev) << " Action = "
                  << actionStr;

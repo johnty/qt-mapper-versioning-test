@@ -13,10 +13,14 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() <<"mapperDB thread started";
 
 
-    dbRefreshTimer = new QTimer();
-    connect(dbRefreshTimer, SIGNAL(timeout()), this, SLOT(refreshDB()));
+    //NOTE: timer removed after
+    //dbRefreshTimer = new QTimer();
+    //connect(dbRefreshTimer, SIGNAL(timeout()), this, SLOT(refreshDB()));
+    //dbRefreshTimer->start(1000); //update once per second
 
-    dbRefreshTimer->start(1000); //update once per second
+    //db update trigger
+    connect(myDB, SIGNAL(devUpdatedSig()), this, SLOT(refreshDB()));
+    connect(myDB, SIGNAL(sigUpdatedSig()), this, SLOT(refreshDB()));
 
     //QStringList testList;
     //testList.append("device 1");
