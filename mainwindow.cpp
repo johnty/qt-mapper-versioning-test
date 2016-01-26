@@ -179,9 +179,11 @@ void MainWindow::refreshDB()
     qDebug() <<"refreshing DB...";
     std::vector<QString> devList = myDB->getDeviceList();
 
-    if (devList.size() != listDevsTree->rowCount())
-    {
-        qDebug() << "numDevs changed; refreshing tree";
+    //if (devList.size() != listDevsTree->rowCount())
+    if (1) //TODO: compare/filter out changes so we don't necessarily refresh entire list
+    {       //right now the update when initializing devices take a while since
+            //with each action we get an entire refresh/query...
+        //qDebug() << "numDevs changed; refreshing tree";
 
         listDevsTree->clear();
         listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
@@ -202,7 +204,7 @@ void MainWindow::refreshDB()
             QStandardItem* rootItem = listDevsTree->invisibleRootItem();
             rootItem->appendRow(dev);
 
-            qDebug() << "dev registered: " << devname;
+            qDebug() << "dev added to UI: " << devname;
         }
         //note: there isn't a super elegant way to keep tree
         //open exactly the way we had between updates, unless we
@@ -212,8 +214,8 @@ void MainWindow::refreshDB()
         // for now, just leave it in expanded mode...
         ui->treeView->expandAll();
 
-        //update the mapping view
-        mySigListViewTab->deviceEvent(myDB->getDB());
+        //update the list tab here:
+        //mySigListViewTab->deviceEvent(myDB->getDB());
 
 //REMINDER: this only happens when number of devices change, which is not ideal...
 // we should do more in depth comparisons, or better yet hook up signal handlers to the instance of the class

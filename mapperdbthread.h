@@ -32,11 +32,21 @@ public:
     // updates from here, and *don't mix QObject stuff* into this db interface class
     //
 
+    //NOTE2: for now, we could also get away with just reacting to
+    // signal add/removes, as we're using a flat view of sig->sig connections
+
     static void devActionHandler(mapper_device dev,
                                  mapper_record_action action,
                                  const void *user);
 
     void devActionFn(mapper_device dev,
+                     mapper_record_action action);
+
+    static void sigActionHandler(mapper_signal sig,
+                                    mapper_record_action action,
+                                    const void *user);
+
+    void sigActionFn(mapper_signal sig,
                      mapper_record_action action);
 
     void run();
@@ -49,6 +59,8 @@ public:
 
     const std::vector<QString> getDeviceList();
     const std::vector<QString> getSigList(QString devname, mapper_direction DIR = MAPPER_DIR_ANY);
+    const std::vector<QString> getSigList();
+
 
     void makeMap(QString sdev, QString ddev, QString ssig, QString dsig);
 
@@ -62,17 +74,18 @@ Q_SIGNALS:
 
 public Q_SLOTS:
 
-    //TODO: hook up this callback properly, along with map events...
-    void devEvent(mapper_device dev, mapper_record_action action);
-
 
 private:
 
     mapper::Db db;
 
     //TODO: should we use std containers or QT ones?
+    // ALSO, by now we should realize we have such a list
+    // in many many places - should probably create a container class
+    // for these things...
+
     std::vector<QString> devlist;
-    std::vector<QString> outSigsList;
+    std::vector<QString> sigList;
 
     std::vector<mapper::Map*> myMaps;
     QMapperDbModel * myDbRenderModel;

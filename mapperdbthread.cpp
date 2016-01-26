@@ -5,6 +5,7 @@ mapperdbthread* FIX_ME;
 mapperdbthread::mapperdbthread() :db(MAPPER_SUBSCRIBE_ALL)
 {
     db.add_device_callback(devActionHandler, nullptr);
+    db.add_signal_callback(sigActionHandler, nullptr);
 
     //set up callback fn ptrs
     //note: so apparently its a bad idea
@@ -68,18 +69,24 @@ const std::vector<QString> mapperdbthread::getSigList(QString devname, mapper_di
     std::vector<QString> list;
     myLock.lock();
 
-    mapper::Device dev = db.device_by_name(devname.toStdString());
+// this is a refresh of entire list:
+//    mapper::Device dev = db.device_by_name(devname.toStdString());
 
-    mapper::Signal::Query qry = dev.signals(dir);
+//    mapper::Signal::Query qry = dev.signals(dir);
 
-    for (; qry != qry.end(); qry++)
-    {
-        mapper::Signal sig = *qry;
-        QString sig_name = sig.name().c_str();
-        list.push_back(sig_name);
-    }
+//    for (; qry != qry.end(); qry++)
+//    {
+//        mapper::Signal sig = *qry;
+//        QString sig_name = sig.name().c_str();
+//        list.push_back(sig_name);
+//    }
     myLock.unlock();
     return list;
+}
+
+const std::vector<QString> mapperdbthread::getSigList()
+{
+
 }
 
 void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString dsig)
@@ -119,16 +126,51 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
 
 }
 
-
-void mapperdbthread::devEvent(mapper_device dev, mapper_record_action action)
+void mapperdbthread::sigActionHandler(mapper_signal sig,
+                                         mapper_record_action action,
+                                         const void *user)
 {
+    QString actionStr;
+    switch (action) {
+    case MAPPER_ADDED:
+        actionStr = "Added";
+        break;
+    case MAPPER_MODIFIED:
+        actionStr = "modified";
+        break;
+    case MAPPER_REMOVED:
+        actionStr = "removed";
+        break;
+    case MAPPER_EXPIRED:
+        actionStr = "unresponsive";
+        //mapper_db_flush(db, 10, 0);
+        break;
+    }
+    FIX_ME->sigActionFn(sig, action);
+}
+
+void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
+{
+    qDebug() <<"instance sigAction";
+    //we assume just two cases, add or remove
+    switch (action) {
+    case MAPPER_ADDED:
+        qDebug()<<"adding sig";
+        Q_EMIT devUpdatedSig();
+        break;
+     case MAPPER_REMOVED:
+        qDebug()<<"removing sig";
+        Q_EMIT devUpdatedSig();
+        break;
+    }
 
 }
+
 
 void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
 {
     qDebug() <<"instance devAction";
-    Q_EMIT devUpdatedSig(); //we can't do this from the static handler below...
+    //Q_EMIT devUpdatedSig(); //we can't do this from the static handler below...
 }
 
 void mapperdbthread::devActionHandler(mapper_device dev,
