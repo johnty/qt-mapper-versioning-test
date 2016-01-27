@@ -6,6 +6,7 @@ mapperdbthread::mapperdbthread() :db(MAPPER_SUBSCRIBE_ALL)
 {
     db.add_device_callback(devActionHandler, nullptr);
     db.add_signal_callback(sigActionHandler, nullptr);
+    db.add_map_callback(mapActionHandler, nullptr);
 
     //set up callback fn ptrs
     //note: so apparently its a bad idea
@@ -41,10 +42,12 @@ void mapperdbthread::stopThread()
 
 mapperdbthread::~mapperdbthread()
 {
+    //we probably don't want to unmap stuff on quit...
+    //just delete our local structures...
     while (myMaps.size())
     {
         mapper::Map* map = myMaps.at(myMaps.size()-1);
-        map->unmap();
+        //map->unmap();
         delete map;
         myMaps.pop_back();
     }
@@ -77,10 +80,10 @@ void mapperdbthread::refreshDbNetworkModel()
 {
     myDbNetworkModel.clearAll();
     for (auto const &device : db.devices())
-    {   //NOTE2SELF: the way we're updating the Db**Modell object
+    {   //NOTE2SELF: the way we're updating the Db**Model object
         // here probably motivates an inheritance of the db model
-        // instead of composition: addDevSigs callls a helper function
-        // which then updates myDbNetworkModel, which suggests a tighter
+        // instead of composition: we make direct modifications
+        // of the model in many places in this class, which suggests a tighter
         // coupling between that object and this class... think about it.
         QString devname((const char*)device.property("name"));
         myDbNetworkModel.addDevice(devname);
@@ -123,6 +126,29 @@ void mapperdbthread::sigActionHandler(mapper_signal sig,
     FIX_ME->sigActionFn(sig, action);
 }
 
+void mapperdbthread::mapActionHandler(mapper_map map, mapper_record_action action, const void *user)
+{
+
+    QString actionStr;
+    switch (action) {
+    case MAPPER_ADDED:
+        actionStr = "Added";
+        break;
+    case MAPPER_MODIFIED:
+        actionStr = "modified";
+        break;
+    case MAPPER_REMOVED:
+        actionStr = "removed";
+        break;
+    case MAPPER_EXPIRED:
+        actionStr = "unresponsive";
+        //mapper_db_flush(db, 10, 0);
+        break;
+    }
+    qDebug() <<"mapperAction callled:" <<actionStr;
+    FIX_ME->mapActionFn(map, action);
+}
+
 void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
 {
     //this call might suggest an addition to the Signal wrapper class?
@@ -141,6 +167,22 @@ void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
         Q_EMIT devUpdatedSig();
         break;
     }
+}
+
+void mapperdbthread::mapActionFn(mapper_map map, mapper_record_action action)
+{
+
+}
+
+void mapperdbthread::tryMap(int src, int dst)
+{
+    QString src_sig = myDbNetworkModel.getSigItem(src)->text();
+    QString src_dev = myDbNetworkModel.getSigItem(src)->child(0)->text();
+    QString dst_sig = myDbNetworkModel.getSigItem(dst)->text();
+    QString dst_dev = myDbNetworkModel.getSigItem(dst)->child(0)->text();
+    qDebug()<<"mapperDB trying to map from" <<src_dev<<":"<<src_sig<<
+              "to <<"<< dst_dev<<":"<<dst_sig;
+    makeMap(src_dev, dst_dev, src_sig, dst_sig);
 }
 
 
@@ -266,6 +308,9 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
     }
     mapper::Map* map = new mapper::Map(srcdev.signal(ssig.toStdString()),
                                        dstdev.signal(dsig.toStdString()));
+
+    map->push();
+
     myMaps.push_back(map);
 
 }

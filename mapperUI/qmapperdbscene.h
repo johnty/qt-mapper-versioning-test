@@ -15,6 +15,8 @@
 #define MAPPER_SCENE_MIDDLE_LAYER 20
 #define MAPPER_SCENE_BOTTOM_LAYER 10
 
+
+
 class QMapperDbScene : public QGraphicsScene
 {
     Q_OBJECT
@@ -40,6 +42,9 @@ public:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
 
     void setAlpha(int alpha);
+
+Q_SIGNALS:
+    void sceneMapSig(int srcIdx, int dstIdx);
 
 public Q_SLOTS:
     void mouseDropped(QPointF pos); //not used any more

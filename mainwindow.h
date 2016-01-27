@@ -28,6 +28,7 @@ public:
 
 public Q_SLOTS:
     void selectedItem(QModelIndex model_idx);
+    void sceneMapSigReceived(int src, int dst);
 
 private Q_SLOTS:
     void on_tabMain_tabBarDoubleClicked(int index);
@@ -37,6 +38,7 @@ private Q_SLOTS:
     void refreshDB();
 
     void on_pushButtonStopTestDevs_clicked();
+
 
 Q_SIGNALS:
     void dBUpdateSig();

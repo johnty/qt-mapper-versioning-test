@@ -35,20 +35,42 @@ public:
     //NOTE2: for now, we could also get away with just reacting to
     // signal add/removes, as we're using a flat view of sig->sig connections
 
+
+    //***********************
+    //FROM mapper db:
+    //***********************
+    //static callback functions
     static void devActionHandler(mapper_device dev,
                                  mapper_record_action action,
                                  const void *user);
-
-    void devActionFn(mapper_device dev,
-                     mapper_record_action action);
-
     static void sigActionHandler(mapper_signal sig,
                                     mapper_record_action action,
                                     const void *user);
+    static void mapActionHandler(mapper_map map,
+                                 mapper_record_action action,
+                                 const void *user);
+
+    //callback->instance functions, bound by awesome hack (global static pointer to self)
+    void devActionFn(mapper_device dev,
+                     mapper_record_action action);
 
     void sigActionFn(mapper_signal sig,
                      mapper_record_action action);
 
+    void mapActionFn(mapper_map map,
+                     mapper_record_action action);
+
+    //***********************
+    //TO mapper db:
+    //***********************
+    void tryMap(int src, int dst);
+    void tryUnMap(int src, int dst); //implement me
+
+
+
+    //***********************
+    //Thread/internal functions
+    //***********************
     void run();
     void stopThread();
     void syncRenderModel(QMapperDbModel* modelToSync);

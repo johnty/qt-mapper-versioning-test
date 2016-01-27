@@ -60,7 +60,9 @@ void QMapperDbScene::mouseDropped(QPointF src, QPointF dst)
 
     int srcIdx = getIndexOfSigNear(src, 10);
     int dstIdx = getIndexOfSigNear(dst_mod, 10);
-    qDebug() << "make map from " << srcIdx <<" to " <<dstIdx;
+    qDebug() << "Scene UI: map from " << srcIdx <<" to " <<dstIdx;
+
+    Q_EMIT sceneMapSig(srcIdx, dstIdx);
 
     return;
     //code below is for testing drawing; we actually want to emit
@@ -145,6 +147,8 @@ void QMapperDbScene::mouseDragged(QPointF src, QPointF dst)
         mapPtDst.setX(sigs.at(hoverIdx)->boundingRectAbs().left());
         mapPtDst.setY(sigs.at(hoverIdx)->boundingRectAbs().top() + MAPPER_SCENE_ITEM_H/2);
     }
+
+    //TODO: don't connect/animate if dst is an output!
 
     //draw map path
     updateTempPath();

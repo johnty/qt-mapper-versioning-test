@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mapperScene->updateScene();
     QObject::connect(this, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
 
+    QObject::connect(mapperScene, SIGNAL(sceneMapSig(int, int)), this, SLOT(sceneMapSigReceived(int,int)));
 
 
 
@@ -141,6 +142,12 @@ void MainWindow::selectedItem(QModelIndex model_idx)
     qDebug() << "selected item from treeview: " << model_idx;
     listPropsTable->setHorizontalHeaderItem(0, new QStandardItem("Name"));
     listPropsTable->setHorizontalHeaderItem(1, new QStandardItem("Value"));
+}
+
+void MainWindow::sceneMapSigReceived(int src, int dst)
+{
+    qDebug() << "UI mapping received: " <<src<<" to " <<dst;
+    myDB->tryMap(src, dst);
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)
