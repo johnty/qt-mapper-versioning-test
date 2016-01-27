@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT          += core gui
+QT          += core gui sql
 
 CONFIG      += c++11  #required by libmapper/lo
 CONFIG      += no_keywords #signals
@@ -22,6 +22,7 @@ DEFINES     += __MAC_OR_UNIX__ # in case we want some specific settings
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/include/mapper-0
 
+LIBS        += -L/usr/local/lib -lgit2
 LIBS        += -L/usr/local/lib/ -llo
 LIBS        += -L/usr/local/lib/ -lmapper-0
 
@@ -44,7 +45,9 @@ SOURCES     += main.cpp\
     mapperUI/customrect.cpp \
     mapperUI/qmapperdbmodel.cpp \
     mapperUI/qmapperdbscene.cpp \
-    mapperUI/qmapperscenelayer.cpp
+    mapperUI/qmapperscenelayer.cpp \
+    mapperData/mapperjsonconfig.cpp \
+    mapperData/mapperdata.cpp
 
 HEADERS     += mainwindow.h \
     mapperdbthread.h \
@@ -57,7 +60,9 @@ HEADERS     += mainwindow.h \
     mapperUI/customrect.h \
     mapperUI/qmapperdbmodel.h \
     mapperUI/qmapperdbscene.h \
-    mapperUI/qmapperscenelayer.h
+    mapperUI/qmapperscenelayer.h \
+    mapperData/mapperjsonconfig.h \
+    mapperData/mapperdata.h
 
 FORMS       += mainwindow.ui \
     linkview.ui \
