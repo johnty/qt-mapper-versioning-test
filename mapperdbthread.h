@@ -61,6 +61,7 @@ public:
     const std::vector<QString> getSigList(QString devname, mapper_direction DIR = MAPPER_DIR_ANY);
     const std::vector<QString> getSigList();
 
+    void refreshDbNetworkModel();
 
     void makeMap(QString sdev, QString ddev, QString ssig, QString dsig);
 
@@ -84,15 +85,19 @@ private:
     // in many many places - should probably create a container class
     // for these things...
 
-    std::vector<QString> devlist;
+    std::vector<QString> devList;
     std::vector<QString> sigList;
 
     std::vector<mapper::Map*> myMaps;
+    QMapperDbModel myDbNetworkModel;
     QMapperDbModel * myDbRenderModel;
 
 //    fn pointers to callback methods
     //note: in c++11 we can init to NULL here, pre-c++11 we can't!
     void (mapperdbthread::*ptrDevAction)(mapper_device dev, mapper_record_action action) = NULL;
+
+    void addDevSigs(QString devname);
+    void signalToDB(QString devname, const mapper::Signal sig, bool isAdd);
 
 };
 

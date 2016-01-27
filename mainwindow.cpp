@@ -177,7 +177,7 @@ void MainWindow::createAndStartTestDevs()
 void MainWindow::refreshDB()
 {
     qDebug() <<"refreshing DB...";
-    std::vector<QString> devList = myDB->getDeviceList();
+
 
     //if (devList.size() != listDevsTree->rowCount())
     if (1) //TODO: compare/filter out changes so we don't necessarily refresh entire list
@@ -185,6 +185,10 @@ void MainWindow::refreshDB()
             //with each action we get an entire refresh/query...
         //qDebug() << "numDevs changed; refreshing tree";
 
+
+        //TODO: the this structure is probably better than
+        // the one in the current QMapperDbModel..
+        std::vector<QString> devList = myDB->getDeviceList();
         listDevsTree->clear();
         listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
         for (auto devname : devList)
@@ -196,7 +200,7 @@ void MainWindow::refreshDB()
             //add signals to dev
             for (int i=0; i< myDB->getSigList(devname).size(); i++)
             {
-                qDebug() <<"from DB: dev = "<<devname<<"  sig = " << myDB->getSigList(devname).at(i);
+                qDebug() <<"Test Tree Model: dev = "<<devname<<"  sig = " << myDB->getSigList(devname).at(i);
                 dev->appendRow(new QStandardItem(myDB->getSigList(devname).at(i)));
             }
 
@@ -204,8 +208,9 @@ void MainWindow::refreshDB()
             QStandardItem* rootItem = listDevsTree->invisibleRootItem();
             rootItem->appendRow(dev);
 
-            qDebug() << "dev added to UI: " << devname;
+            //qDebug() << "dev added to tree test model: " << devname;
         }
+
         //note: there isn't a super elegant way to keep tree
         //open exactly the way we had between updates, unless we
         // a.) "double buffer" the model and only refresh when changed
@@ -224,15 +229,6 @@ void MainWindow::refreshDB()
         myDB->syncRenderModel(mapperSceneDbModel); //update the data
         Q_EMIT dBUpdateSig();    //trigger render
 
-    }
-
-    return;
-
-
-    std::vector<QString> listDevs = myDB->getDeviceList();
-    for (int i=0; i<listDevs.size(); ++i)
-    {
-        qDebug() << listDevs.at(i);
     }
 }
 

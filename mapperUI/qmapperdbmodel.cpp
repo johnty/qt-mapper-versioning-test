@@ -12,7 +12,7 @@ void QMapperDbModel::addDevice(QString devName)
 
 void QMapperDbModel::addSignal(QString devName, QString sigName, bool isInput)
 {
-    qDebug()<<"DbModel addsig" <<devName<<":"<<sigName<<":"<<isInput;
+    qDebug()<<"DbModel add sig" <<devName<<":"<<sigName<<":"<<isInput;
     QStandardItem* newSig = new QStandardItem(sigName);
 
     newSig->insertRow(0, new QStandardItem(devName));
@@ -23,6 +23,24 @@ void QMapperDbModel::addSignal(QString devName, QString sigName, bool isInput)
 
     mapperSignals.append(newSig);
 
+}
+
+void QMapperDbModel::removeSignal(QString devName, QString sigName)
+{
+    //TODO: fill this; we probably don't use it except when clearing whole list,
+    // but in future when
+    for (int i=0; i<mapperSignals.size(); ++i)
+    {
+        if (sigName == mapperSignals.at(i)->text())
+        {
+            if (mapperSignals.at(i)->child(0)->text() == devName)
+            {
+                qDebug() <<"DbModel remove sig " <<sigName<<":" <<devName;
+                mapperSignals.removeAt(i);
+                break;
+            }
+        }
+    }
 }
 
 void QMapperDbModel::LoadFromTest(int testDB)
@@ -120,4 +138,13 @@ void QMapperDbModel::clearAll()
     mapperMapsDst.clear();
     mapperMapsSrc.clear();
 
+}
+
+void QMapperDbModel::syncWith(const QMapperDbModel &model)
+{
+    clearAll();
+    mapperDevNames = model.mapperDevNames;
+    mapperSignals = model.mapperSignals;
+    mapperMapsDst = model.mapperMapsDst;
+    mapperMapsSrc = model.mapperMapsSrc;
 }

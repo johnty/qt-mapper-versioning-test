@@ -53,40 +53,162 @@ mapperdbthread::~mapperdbthread()
 
 const std::vector<QString> mapperdbthread::getDeviceList()
 {
-    std::vector<QString> list;
-    myLock.lock();
-    for (auto const &device : db.devices())
-    {
-        QString devname((const char*)device.property("name"));
-        list.push_back(devname);        
-    }
-    myLock.unlock();
-    return list;
+    return devList;
 }
 
 const std::vector<QString> mapperdbthread::getSigList(QString devname, mapper_direction dir)
 {
-    std::vector<QString> list;
-    myLock.lock();
-
-// this is a refresh of entire list:
-//    mapper::Device dev = db.device_by_name(devname.toStdString());
-
-//    mapper::Signal::Query qry = dev.signals(dir);
-
-//    for (; qry != qry.end(); qry++)
-//    {
-//        mapper::Signal sig = *qry;
-//        QString sig_name = sig.name().c_str();
-//        list.push_back(sig_name);
-//    }
-    myLock.unlock();
-    return list;
+    return sigList;
 }
 
 const std::vector<QString> mapperdbthread::getSigList()
 {
 
+}
+
+void mapperdbthread::refreshDbNetworkModel()
+{
+    myDbNetworkModel.clearAll();
+    for (auto const &device : db.devices())
+    {   //NOTE2SELF: the way we're updating the Db**Modell object
+        // here probably motivates an inheritance of the db model
+        // instead of composition: addDevSigs callls a helper function
+        // which then updates myDbNetworkModel, which suggests a tighter
+        // coupling between that object and this class... think about it.
+        QString devname((const char*)device.property("name"));
+        myDbNetworkModel.addDevice(devname);
+        addDevSigs(devname);
+    }
+}
+
+void mapperdbthread::addDevSigs(QString devname)
+{
+    mapper::Device dev = db.device_by_name(devname.toStdString());
+
+    mapper::Signal::Query qry = dev.signals(MAPPER_DIR_ANY);
+    for (; qry != qry.end(); qry++)
+    {
+        mapper::Signal csig = *qry;
+        signalToDB(devname, csig, true);
+   }
+}
+
+void mapperdbthread::sigActionHandler(mapper_signal sig,
+                                         mapper_record_action action,
+                                         const void *user)
+{
+    QString actionStr;
+    switch (action) {
+    case MAPPER_ADDED:
+        actionStr = "Added";
+        break;
+    case MAPPER_MODIFIED:
+        actionStr = "modified";
+        break;
+    case MAPPER_REMOVED:
+        actionStr = "removed";
+        break;
+    case MAPPER_EXPIRED:
+        actionStr = "unresponsive";
+        //mapper_db_flush(db, 10, 0);
+        break;
+    }
+    FIX_ME->sigActionFn(sig, action);
+}
+
+void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
+{
+    //this call might suggest an addition to the Signal wrapper class?
+    QString devname(mapper_device_name( mapper_signal_device(sig)));
+    //we assume just two cases, add or remove
+    mapper::Signal csignal(sig);
+    switch (action) {
+    case MAPPER_ADDED:
+        qDebug()<<"sigAction: adding sig";
+        signalToDB(devname, csignal, true);
+        Q_EMIT devUpdatedSig();
+        break;
+     case MAPPER_REMOVED:
+        qDebug()<<"sigAction: removing sig";
+        signalToDB(devname, csignal, false);
+        Q_EMIT devUpdatedSig();
+        break;
+    }
+}
+
+
+void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
+{
+    //qDebug() <<"instance devAction";
+    //Q_EMIT devUpdatedSig(); //we can't do this from the static handler below...
+}
+
+void mapperdbthread::devActionHandler(mapper_device dev,
+                            mapper_record_action action,
+                            const void *user)
+{ //we ignore these at the moment...
+    QString actionStr;
+    switch (action) {
+    case MAPPER_ADDED:
+        actionStr = "Added";
+        break;
+    case MAPPER_MODIFIED:
+        actionStr = "modified";
+        break;
+    case MAPPER_REMOVED:
+        actionStr = "removed";
+        break;
+    case MAPPER_EXPIRED:
+        actionStr = "unresponsive";
+        //mapper_db_flush(db, 10, 0);
+        break;
+    }
+
+    //(*ptrDevAction)(dev, action);
+    FIX_ME->devActionFn(dev, action);
+
+    //qDebug() << "devAction from " << mapper_device_name(dev) << " Action = "<< actionStr;
+
+}
+
+void mapperdbthread::syncRenderModel(QMapperDbModel *modelToSync)
+{
+    qDebug()<<"syncing QMapperDbModel";
+    //For now, we're really just interested in the flat signals view, so thats what we do...
+    // for whatever's sake, we do a complete query of the db so really this is not a sync as a complete
+    // poll, (clean this up once we have callbacks, and world peace...)
+    // ---- update: we have something like callbacks in behavior now, but are still far from world peace.
+
+    //new way: just sync the model objects
+    modelToSync->syncWith(myDbNetworkModel);
+
+
+    return;
+
+    //old method: complete query on sync
+    myLock.lock();
+    for (auto const &device : db.devices())
+    {
+        QString dev_name((const char*)device.property("name"));
+        modelToSync->addDevice(dev_name);
+        mapper::Signal::Query qry = device.signals(MAPPER_DIR_INCOMING);
+        for (; qry != qry.end(); qry++)
+        {
+            mapper::Signal sig = *qry;
+            QString sig_name = sig.name().c_str();
+            modelToSync->addSignal(dev_name, sig_name, true );
+        }
+
+        mapper::Signal::Query qry2 = device.signals(MAPPER_DIR_OUTGOING);
+        for (; qry2 != qry2.end(); qry2++)
+        {
+            mapper::Signal sig = *qry2;
+            QString sig_name = sig.name().c_str();
+            modelToSync->addSignal(dev_name, sig_name, false );
+        }
+
+    }
+    myLock.unlock();
 }
 
 void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString dsig)
@@ -126,110 +248,15 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
 
 }
 
-void mapperdbthread::sigActionHandler(mapper_signal sig,
-                                         mapper_record_action action,
-                                         const void *user)
+void mapperdbthread::signalToDB(QString devname, const mapper::Signal signal, bool isAdd)
 {
-    QString actionStr;
-    switch (action) {
-    case MAPPER_ADDED:
-        actionStr = "Added";
-        break;
-    case MAPPER_MODIFIED:
-        actionStr = "modified";
-        break;
-    case MAPPER_REMOVED:
-        actionStr = "removed";
-        break;
-    case MAPPER_EXPIRED:
-        actionStr = "unresponsive";
-        //mapper_db_flush(db, 10, 0);
-        break;
-    }
-    FIX_ME->sigActionFn(sig, action);
-}
-
-void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
-{
-    qDebug() <<"instance sigAction";
-    //we assume just two cases, add or remove
-    switch (action) {
-    case MAPPER_ADDED:
-        qDebug()<<"adding sig";
-        Q_EMIT devUpdatedSig();
-        break;
-     case MAPPER_REMOVED:
-        qDebug()<<"removing sig";
-        Q_EMIT devUpdatedSig();
-        break;
-    }
-
-}
-
-
-void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
-{
-    qDebug() <<"instance devAction";
-    //Q_EMIT devUpdatedSig(); //we can't do this from the static handler below...
-}
-
-void mapperdbthread::devActionHandler(mapper_device dev,
-                            mapper_record_action action,
-                            const void *user)
-{
-    QString actionStr;
-    switch (action) {
-    case MAPPER_ADDED:
-        actionStr = "Added";
-        break;
-    case MAPPER_MODIFIED:
-        actionStr = "modified";
-        break;
-    case MAPPER_REMOVED:
-        actionStr = "removed";
-        break;
-    case MAPPER_EXPIRED:
-        actionStr = "unresponsive";
-        //mapper_db_flush(db, 10, 0);
-        break;
-    }
-
-    //(*ptrDevAction)(dev, action);
-    FIX_ME->devActionFn(dev, action);
-
-    qDebug() << "devAction from " << mapper_device_name(dev) << " Action = "
-                 << actionStr;
-
-}
-
-void mapperdbthread::syncRenderModel(QMapperDbModel *modelToSync)
-{
-    modelToSync->clearAll();
-
-    //For now, we're really just interested in the flat signals view, so thats what we do...
-    // for whatever's sake, we do a complete query of the db so really this is not a sync as a complete
-    // poll, (clean this up once we have callbacks, and world peace...)
-    myLock.lock();
-    for (auto const &device : db.devices())
-    {
-        QString dev_name((const char*)device.property("name"));
-        modelToSync->addDevice(dev_name);
-        mapper::Signal::Query qry = device.signals(MAPPER_DIR_INCOMING);
-        for (; qry != qry.end(); qry++)
-        {
-            mapper::Signal sig = *qry;
-            QString sig_name = sig.name().c_str();
-            modelToSync->addSignal(dev_name, sig_name, true );
-        }
-
-        mapper::Signal::Query qry2 = device.signals(MAPPER_DIR_OUTGOING);
-        for (; qry2 != qry2.end(); qry2++)
-        {
-            mapper::Signal sig = *qry2;
-            QString sig_name = sig.name().c_str();
-            modelToSync->addSignal(dev_name, sig_name, false );
-        }
-
-    }
-    myLock.unlock();
+    QString sig_name(signal.name().c_str());
+    mapper_direction dir = signal.property("direction");
+    bool is_input = true;
+    if (dir == MAPPER_DIR_OUTGOING)
+        is_input = false;
+    if (isAdd)
+        myDbNetworkModel.addSignal(devname, sig_name, is_input);
+    else
+        myDbNetworkModel.removeSignal(devname, sig_name);
 }

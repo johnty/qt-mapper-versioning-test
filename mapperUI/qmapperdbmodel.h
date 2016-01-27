@@ -28,6 +28,8 @@ public:
 
     void clearAll();
 
+    void syncWith(const QMapperDbModel& model);
+
     const QStandardItem* getSigItem(int index) {return mapperSignals.at(index);}
     const QString getSigName(int idx);
     const QString getSigDevName(int idx);
@@ -38,6 +40,7 @@ public:
 
     void addDevice(QString devName);
     void addSignal(QString devName, QString sigName, bool isInput);
+    void removeSignal(QString devName, QString sigName);
 private:
 
     //TODO: more organized data structures
