@@ -188,7 +188,7 @@ void MainWindow::refreshDB()
 
         //TODO: the this structure is probably better than
         // the one in the current QMapperDbModel..
-        std::vector<QString> devList = myDB->getDeviceList();
+        const std::vector<QString>& devList = myDB->getDeviceList();
         listDevsTree->clear();
         listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
         for (auto devname : devList)
@@ -198,10 +198,11 @@ void MainWindow::refreshDB()
             //listDevsTree->setHorizontalHeaderItem(0, new QStandardItem("Devices"));
 
             //add signals to dev
-            for (int i=0; i< myDB->getSigList(devname).size(); i++)
+            const std::vector<QString> sigList = myDB->getSigList(devname);
+            for (int i=0; i< sigList.size(); i++)
             {
-                qDebug() <<"Test Tree Model: dev = "<<devname<<"  sig = " << myDB->getSigList(devname).at(i);
-                dev->appendRow(new QStandardItem(myDB->getSigList(devname).at(i)));
+                //qDebug() <<"Test Tree Model: dev = "<<devname<<"  sig = " << sigList.at(i);
+                dev->appendRow(new QStandardItem(sigList.at(i)));
             }
 
             //add device to list (at root level)
@@ -217,7 +218,7 @@ void MainWindow::refreshDB()
         // b.) keep track of treeview status, and reset it every time
         // c.) something else?
         // for now, just leave it in expanded mode...
-        ui->treeView->expandAll();
+        //ui->treeView->expandAll();
 
         //update the list tab here:
         //mySigListViewTab->deviceEvent(myDB->getDB());

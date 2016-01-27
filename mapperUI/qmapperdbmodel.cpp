@@ -25,6 +25,19 @@ void QMapperDbModel::addSignal(QString devName, QString sigName, bool isInput)
 
 }
 
+void QMapperDbModel::removeDevice(QString devName)
+{
+    for (int i=0; i<mapperDevNames.size(); ++i)
+    {
+        if (mapperDevNames.at(i) == devName)
+        {
+            mapperDevNames.removeAt(i);
+            break;
+        }
+    }
+
+}
+
 void QMapperDbModel::removeSignal(QString devName, QString sigName)
 {
     //TODO: fill this; we probably don't use it except when clearing whole list,
@@ -41,6 +54,27 @@ void QMapperDbModel::removeSignal(QString devName, QString sigName)
             }
         }
     }
+}
+
+const std::vector<QString> QMapperDbModel::getDevs()
+{
+    return mapperDevNames.toStdVector();
+}
+
+const std::vector<QString> QMapperDbModel::getDevSigs(QString devname)
+{
+    std::vector<QString> list;
+    for (int i=0; i<mapperSignals.size(); ++i)
+    {
+        // this shows why tree structure makes more sense
+        // (and elsewhere it might show otherwise...)
+        if (devname == mapperSignals.at(i)->child(0)->text())
+        {
+            QString signame = mapperSignals.at(i)->text();
+            list.push_back(signame);
+        }
+    }
+    return list;
 }
 
 void QMapperDbModel::LoadFromTest(int testDB)

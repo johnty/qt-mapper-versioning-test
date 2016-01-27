@@ -15,7 +15,7 @@ mapperdbthread::mapperdbthread() :db(MAPPER_SUBSCRIBE_ALL)
     // so once we have some time we should re-look how
     // the db model interacts with QT objects (main limitation being
     // we cannot emit QT signals directly from static functions).
-    ptrDevAction = &mapperdbthread::devActionFn;
+    //ptrDevAction = &mapperdbthread::devActionFn;
     FIX_ME = this;
 }
 
@@ -53,18 +53,25 @@ mapperdbthread::~mapperdbthread()
 
 const std::vector<QString> mapperdbthread::getDeviceList()
 {
-    return devList;
+    return myDbNetworkModel.getDevs();
+    //return devList;
 }
 
-const std::vector<QString> mapperdbthread::getSigList(QString devname, mapper_direction dir)
+const std::vector<QString> mapperdbthread::getSigList(QString devname)
 {
-    return sigList;
+    return myDbNetworkModel.getDevSigs(devname);
 }
 
-const std::vector<QString> mapperdbthread::getSigList()
-{
+//const std::vector<QString> mapperdbthread::getSigList(QString devname, mapper_direction dir)
+//{
+//    return sigList;
+//}
 
-}
+//const std::vector<QString> mapperdbthread::getSigList()
+//{
+
+//}
+
 
 void mapperdbthread::refreshDbNetworkModel()
 {
@@ -140,13 +147,28 @@ void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
 void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
 {
     //qDebug() <<"instance devAction";
-    //Q_EMIT devUpdatedSig(); //we can't do this from the static handler below...
+    QString devname(mapper_device_name(dev));
+    switch (action) {
+    case MAPPER_ADDED:
+        qDebug()<<"devAction: adding dev";
+        myDbNetworkModel.addDevice(devname);
+        //signalToDB(devname, csignal, true);
+        break;
+     case MAPPER_REMOVED:
+        qDebug()<<"devAction: removing dev";
+        //signalToDB(devname, csignal, false);
+        myDbNetworkModel.removeDevice(devname);
+        break;
+    }
+        //we let the UI respond to sig changes only, and don't "care" about the dev
+        // updates for now except for updating our internal db above...
+    //Q_EMIT devUpdatedSig();
 }
 
 void mapperdbthread::devActionHandler(mapper_device dev,
                             mapper_record_action action,
                             const void *user)
-{ //we ignore these at the moment...
+{
     QString actionStr;
     switch (action) {
     case MAPPER_ADDED:

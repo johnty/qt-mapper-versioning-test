@@ -35,12 +35,17 @@ public:
     const QString getSigDevName(int idx);
     const bool isOutputSig(int idx);
 
+    //TODO: decide on QVector or std::vector and then make it consistent throughout!!
     const QVector<int>& getMapSrcs() { return mapperMapsSrc;}
     const QVector<int>& getMapDsts() { return mapperMapsDst;}
 
     void addDevice(QString devName);
     void addSignal(QString devName, QString sigName, bool isInput);
+    void removeDevice(QString devName);
     void removeSignal(QString devName, QString sigName);
+
+    const std::vector<QString> getDevs();
+    const std::vector<QString> getDevSigs(QString devname);
 private:
 
     //TODO: more organized data structures

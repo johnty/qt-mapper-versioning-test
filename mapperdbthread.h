@@ -57,9 +57,12 @@ public:
 
     QMutex myLock;
 
+    //because of some bad decisions made earlier, we
+    // pass copies of the data... should be fixed!
     const std::vector<QString> getDeviceList();
-    const std::vector<QString> getSigList(QString devname, mapper_direction DIR = MAPPER_DIR_ANY);
-    const std::vector<QString> getSigList();
+    //const std::vector<QString> getSigList(QString devname, mapper_direction DIR = MAPPER_DIR_ANY);
+    //const std::vector<QString> getSigList();
+    const std::vector<QString> getSigList(QString devname);
 
     void refreshDbNetworkModel();
 
