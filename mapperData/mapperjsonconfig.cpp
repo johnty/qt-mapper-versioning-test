@@ -24,9 +24,23 @@ MapperJsonConfig::MapperJsonConfig(const QString filePath, QIODevice::OpenModeFl
 
     if (jsonDoc.isObject()) //the top level is a "mapping" object
     {
-        ParseFile(jsonDoc.object());
+        mapperConfigObject = jsonDoc.object();
+        ParseFile(mapperConfigObject);
     }
 
+}
+
+bool MapperJsonConfig::SaveConfigToJSONFile(QString filePath)
+{
+    QJsonDocument jsonDoc(mapperConfigObject);
+    QFile saveFile("test.json");
+    if (!saveFile.open((QIODevice::WriteOnly)))
+    {
+        qWarning() <<"cannot open "<<saveFile.fileName();
+        return false;
+    }
+    saveFile.write(jsonDoc.toJson());
+    return true;
 }
 
 bool MapperJsonConfig::ParseFile(const QJsonObject& json_obj)

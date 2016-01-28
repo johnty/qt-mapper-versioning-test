@@ -14,12 +14,14 @@ class MapperJsonConfig : public MapperData
 public:
     MapperJsonConfig();
     MapperJsonConfig(const QString filePath, QIODevice::OpenModeFlag mode = QIODevice::ReadWrite);
+    bool SaveConfigToJSONFile(QString filePath);
 
     const QList<MAPPER_SRC_DST>* getSrcs() { return &mySources; }
     const QList<MAPPER_SRC_DST>* getDests() { return &myDestinations; }
     const QList<QString>* getConns() { return &myConnectionExprs; }
 
 private:
+    QJsonObject mapperConfigObject;
     bool ParseFile(const QJsonObject& json_doc);
     //TODO: data to hold other stuff...
 };

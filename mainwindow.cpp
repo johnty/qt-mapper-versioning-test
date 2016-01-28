@@ -7,8 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-
     qDebug() <<"mapperDB thread started";
 
 
@@ -105,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //popUpWind->show();
     QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
 
-    resize(QDesktopWidget().availableGeometry(this).size()*0.6);
+    resize(QDesktopWidget().availableGeometry(this).size()*0.7);
 
     //pop up the versioning dialog
     popupVersionsDlg = new VersionsDialog(this);

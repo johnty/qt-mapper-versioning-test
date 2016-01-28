@@ -74,7 +74,7 @@ void CustomRect::mousePressEvent(QGraphicsSceneMouseEvent *e) {
 
     }
     //QGraphicsItem::mousePressEvent(e);
-    update();
+    //update();
 }
 
 void CustomRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
@@ -101,7 +101,7 @@ void CustomRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
 
 
     //QGraphicsItem::mouseReleaseEvent(e);
-    //update();
+    //update(); //this update, for some weird reason, does strange things occasionally.
 }
 
 void CustomRect::mouseMoveEvent(QGraphicsSceneMouseEvent *e) {
