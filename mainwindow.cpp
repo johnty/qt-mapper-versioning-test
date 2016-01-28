@@ -7,8 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    myDB = new mapperdbthread();
-    myDB->start();
+
 
     qDebug() <<"mapperDB thread started";
 
@@ -20,9 +19,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //db update trigger
     //connect(myDB, SIGNAL(devUpdatedSig()), this, SLOT(refreshDB()));
-    connect(myDB, SIGNAL(sigUpdatedSig()), this, SLOT(refreshDB()));
-    connect(myDB, SIGNAL(mapUpdatedSig()), this, SLOT(refreshDB()));
 
+    if (LIVE_MAPPER_DB)
+    {
+        myDB = new mapperdbthread();
+        myDB->start();
+        connect(myDB, SIGNAL(sigUpdatedSig()), this, SLOT(refreshDB()));
+        connect(myDB, SIGNAL(mapUpdatedSig()), this, SLOT(refreshDB()));
+    }
     //QStringList testList;
     //testList.append("device 1");
     //testList.append("device 2");
@@ -52,12 +56,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeView->setModel(listDevsTree);
     ui->treeView->expandAll();
 
-    popUpWind = new QWidget();
+    popUpDevicesWind = new QWidget();
     popUpContent = new QTreeView();
     popUpContent->setModel(listDevsTree);
     popUpContent->expandAll();
     //popUpContent->setParent(popUpWind);
-
 
     //init the list tab
 
@@ -98,24 +101,41 @@ MainWindow::MainWindow(QWidget *parent) :
     QGridLayout* layout = new QGridLayout();
     layout->addWidget(popUpContent);
     //layout->addWidget(ui->tabDevs);
-    popUpWind->setLayout(layout);
+    popUpDevicesWind->setLayout(layout);
     //popUpWind->show();
     QObject::connect(ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectedItem(QModelIndex)));
 
+    resize(QDesktopWidget().availableGeometry(this).size()*0.6);
+
+    //pop up the versioning dialog
+    popupVersionsDlg = new VersionsDialog(this);
+    popupVersionsDlg->show();
+    popupVersionsDlg->move(this->window()->x()+this->window()->width(), this->window()->y());
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 
-    myDB->stopThread();
-    myDB->wait();
-    qDebug() <<"db thread stopped";
-    delete myDB;
+    if (LIVE_MAPPER_DB)
+    {
+        myDB->stopThread();
+        myDB->wait();
+        qDebug()<<"closing mapper db...";
+        delete myDB;
+        qDebug()<<"   ...done.";
+    }
 
     delete dbRefreshTimer;
 
     stopAndDeleteTestDevs();
+}
+
+void MainWindow::resizeEvent(QResizeEvent* e)
+{
+    //qDebug() <<"main resize";
+    if ( (popupVersionsDlg != NULL) && (!popupVersionsDlg->isHidden()) )
+        popupVersionsDlg->move(this->window()->x()+this->window()->width(), this->window()->y());
 }
 
 void MainWindow::syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table)
@@ -151,24 +171,41 @@ void MainWindow::selectedItem(QModelIndex model_idx)
 void MainWindow::sceneMapSigReceived(int src, int dst)
 {
     qDebug() << "UI mapping received: " <<src<<" to " <<dst;
-    myDB->tryMap(src, dst);
+    if (LIVE_MAPPER_DB)
+        myDB->tryMap(src, dst);
+    else
+    {
+        mapperSceneDbModel->updateMap(src, dst, true);
+    }
 }
 
 void MainWindow::sceneUnMapSigReceived(int src, int dst)
 {
     qDebug() << "UI unmap received: " <<src<<" to " <<dst;
-    myDB->tryMap(src, dst, false);
+    if (LIVE_MAPPER_DB)
+        myDB->tryMap(src, dst, false);
+    else
+    {
+        mapperSceneDbModel->updateMap(src, dst, false);
+    }
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)
 {
     if (index == ui->tabMain->indexOf(ui->tabDevs))
     {
-        popUpWind->show();
+        popUpDevicesWind->show();
     }
     else if (index == ui->tabMain->indexOf(ui->tabMapperMain))
     {
 
+    }
+    else if (index == ui->tabMain->indexOf(ui->tabVersions))
+    {
+        if (popupVersionsDlg != NULL)
+        {
+            popupVersionsDlg->show();
+        }
     }
 }
 
@@ -271,6 +308,7 @@ void MainWindow::stopAndDeleteTestDevs()
 void MainWindow::syncAndRefreshScene()
 {   //TODO: consider making the DbModels emit update commands
     // to their attached scenes...
-    myDB->syncRenderModel(mapperSceneDbModel); //update the data
+    if (LIVE_MAPPER_DB)
+        myDB->syncRenderModel(mapperSceneDbModel); //update the data
     //Q_EMIT dBUpdateSig();    //trigger render
 }

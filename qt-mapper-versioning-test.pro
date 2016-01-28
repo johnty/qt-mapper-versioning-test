@@ -47,7 +47,8 @@ SOURCES     += main.cpp\
     mapperUI/qmapperdbscene.cpp \
     mapperUI/qmapperscenelayer.cpp \
     mapperData/mapperjsonconfig.cpp \
-    mapperData/mapperdata.cpp
+    mapperData/mapperdata.cpp \
+    versionsdialog.cpp
 
 HEADERS     += mainwindow.h \
     mapperdbthread.h \
@@ -62,9 +63,11 @@ HEADERS     += mainwindow.h \
     mapperUI/qmapperdbscene.h \
     mapperUI/qmapperscenelayer.h \
     mapperData/mapperjsonconfig.h \
-    mapperData/mapperdata.h
+    mapperData/mapperdata.h \
+    versionsdialog.h
 
 FORMS       += mainwindow.ui \
     linkview.ui \
     signallist.ui \
-    connectionprops.ui
+    connectionprops.ui \
+    versionsdialog.ui

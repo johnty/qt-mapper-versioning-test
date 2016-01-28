@@ -163,6 +163,7 @@ void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
         Q_EMIT sigUpdatedSig();
         break;
     case MAPPER_REMOVED:
+        //
         signalToDB(devname, csignal, false);
         qDebug()<<"sigAction: removing " <<devname<<":"<<csignal.name().c_str();
         Q_EMIT sigUpdatedSig();
@@ -346,24 +347,27 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
 
 void mapperdbthread::breakMap(QString sdev, QString ddev, QString ssig, QString dsig)
 {
-//    // not best way
-//    for (auto map : db.maps())
-//    {
-
-//        for (int i=0; i<map.num_sources(); i++)
-//        {
-//            QString src_dev(map.source().device().name().c_str());
-//            QString src_sig(map.source().signal().name().c_str());
-//            QString dst_dev(map.destination().device().name().c_str());
-//            QString dst_sig(map.destination().signal().name().c_str());
-//            //you know, std::string == works too...
-//            if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
-//            {
-//                map.unmap();
-//            }
-//        }
-//    }
-//    return; //TODO: get rid of myMaps!
+    // not best way
+    for (auto const& map : db.maps())
+    {
+        for (int i=0; i<map.num_sources(); i++)
+        {
+            QString src_dev(map.source().device().name().c_str());
+            QString src_sig(map.source().signal().name().c_str());
+            QString dst_dev(map.destination().device().name().c_str());
+            QString dst_sig(map.destination().signal().name().c_str());
+            //you know, std::string == works too...
+            if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
+            {
+                mapper::Map curr_map = db.map_by_id(map.id());
+                qDebug() <<"found map to be unmapped: id =  " <<curr_map.id()
+                                <<" src = " <<curr_map.source().signal().name().c_str()
+                                <<" dst = " <<curr_map.destination().signal().name().c_str();
+                curr_map.unmap();
+            }
+        }
+    }
+    return; //TODO: get rid of myMaps!
     for (int i=0; i<myMaps.size(); ++i)
     {
         mapper::Map* map = myMaps.at(i);

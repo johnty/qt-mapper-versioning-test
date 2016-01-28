@@ -95,6 +95,7 @@ void QMapperDbModel::updateMap(int srcIdx, int dstIdx, bool isAdd)
     }
     else if ( (mapIndex != -1) && !isAdd )
     {
+        qDebug()<<"DbModel removed map at "<<mapIndex;
         removeMap(mapIndex);
     }
     Q_EMIT dBUpdateSig();

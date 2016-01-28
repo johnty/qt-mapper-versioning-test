@@ -6,12 +6,16 @@
 #include <QTreeView>
 #include <QTimer>
 #include <QDebug>
+#include <QDesktopWidget>
 #include "testmapperdevice.h"
 #include "mapperdbthread.h"
 #include "listtab.h"
+#include "versionsdialog.h"
 
 #include "mapperUI/qmapperdbscene.h"
 #include "mapperUI/qmapperdbmodel.h"
+
+#define LIVE_MAPPER_DB 0
 
 
 namespace Ui {
@@ -25,6 +29,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    void resizeEvent(QResizeEvent* e);
 
 public Q_SLOTS:
     void selectedItem(QModelIndex model_idx);
@@ -52,14 +58,17 @@ private:
     void syncAndRefreshScene();
 
     Ui::MainWindow *ui;
+
     QStandardItemModel *listDevsTree;
     QStandardItemModel *listPropsTable;
     void syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table);
 
     std::vector<testmapperdevice*> testDevices;
     mapperdbthread* myDB;
-    QWidget* popUpWind;
+    QWidget* popUpDevicesWind;
     QTreeView* popUpContent;
+
+    VersionsDialog* popupVersionsDlg;
 
     //signal list tab
     ListTab* mySigListViewTab;

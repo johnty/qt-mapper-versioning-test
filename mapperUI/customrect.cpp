@@ -46,6 +46,7 @@ void CustomRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     //painter->setPen(pen,)
     painter->fillRect(rect,brush);
+    painter->setPen(pen);
     painter->drawRect(rect);
 
     painter->setPen(colorText);
@@ -99,8 +100,8 @@ void CustomRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *e) {
     }
 
 
-    QGraphicsItem::mouseReleaseEvent(e);
-    update();
+    //QGraphicsItem::mouseReleaseEvent(e);
+    //update();
 }
 
 void CustomRect::mouseMoveEvent(QGraphicsSceneMouseEvent *e) {

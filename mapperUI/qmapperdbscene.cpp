@@ -128,6 +128,7 @@ void QMapperDbScene::mouseDragged(QPointF src, QPointF dst)
         if ((i == hoverIdx) && (srcIdx != hoverIdx))
         {
             sigs.at(i)->setHovered(true);
+            qDebug()<<"sig hover at " <<i;
         }
         else
         {   //unfortunately we have to also set everything else to
