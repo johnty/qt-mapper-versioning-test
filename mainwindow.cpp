@@ -109,6 +109,14 @@ MainWindow::MainWindow(QWidget *parent) :
     popupVersionsDlg = new VersionsDialog(this);
     popupVersionsDlg->show();
     popupVersionsDlg->move(this->window()->x()+this->window()->width(), this->window()->y());
+
+
+    QDir dir(QDir::current());
+    dir.cdUp(); dir.cdUp(); dir.cdUp();
+    QString app_root = dir.absolutePath();
+    QString file = app_root+"/mapping.json";
+    popupVersionsDlg->testLoadSaveJSON(file);
+
 }
 
 MainWindow::~MainWindow()

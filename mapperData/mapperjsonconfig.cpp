@@ -33,13 +33,14 @@ MapperJsonConfig::MapperJsonConfig(const QString filePath, QIODevice::OpenModeFl
 bool MapperJsonConfig::SaveConfigToJSONFile(QString filePath)
 {
     QJsonDocument jsonDoc(mapperConfigObject);
-    QFile saveFile("test.json");
+    QFile saveFile(filePath);
     if (!saveFile.open((QIODevice::WriteOnly)))
     {
         qWarning() <<"cannot open "<<saveFile.fileName();
         return false;
     }
     saveFile.write(jsonDoc.toJson());
+    saveFile.close();
     return true;
 }
 

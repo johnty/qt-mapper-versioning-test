@@ -17,6 +17,8 @@ public:
     explicit VersionsDialog(QWidget *parent = 0);
     ~VersionsDialog();
 
+    void testLoadSaveJSON(QString filename);
+
     void fromMapperDBView(const QMapperDbModel* dbviewmodell);
 
 private Q_SLOTS:
