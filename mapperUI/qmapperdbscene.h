@@ -45,6 +45,7 @@ public:
 
 Q_SIGNALS:
     void sceneMapSig(int srcIdx, int dstIdx);
+    void sceneUnMapSig(int srcIdx, int dstIdx);
 
 public Q_SLOTS:
     void mouseDropped(QPointF pos); //not used any more

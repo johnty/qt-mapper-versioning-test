@@ -90,6 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(mapperSceneDbModel, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
 
     QObject::connect(mapperScene, SIGNAL(sceneMapSig(int, int)), this, SLOT(sceneMapSigReceived(int,int)));
+    QObject::connect(mapperScene, SIGNAL(sceneUnMapSig(int, int)), this, SLOT(sceneUnMapSigReceived(int,int)));
 
 
 
@@ -151,6 +152,12 @@ void MainWindow::sceneMapSigReceived(int src, int dst)
 {
     qDebug() << "UI mapping received: " <<src<<" to " <<dst;
     myDB->tryMap(src, dst);
+}
+
+void MainWindow::sceneUnMapSigReceived(int src, int dst)
+{
+    qDebug() << "UI unmap received: " <<src<<" to " <<dst;
+    myDB->tryMap(src, dst, false);
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)

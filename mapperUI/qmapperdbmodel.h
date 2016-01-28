@@ -53,6 +53,7 @@ public:
     void updateMap(int srcIdx, int dstIdx, bool isAdd);
     void removeMap(int idx);
     int mapExists(int srcIdx, int dstIdx);
+    int mapExists(QString srcDev, QString srcSig, QString dstDev, QString dstSig);
 
     const std::vector<QString> getDevs();
     const std::vector<QString> getDevSigs(QString devname);

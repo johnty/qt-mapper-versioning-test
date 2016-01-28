@@ -46,7 +46,7 @@ void QMapperDbScene::mouseDragged(QPointF pos)
 
 void QMapperDbScene::mouseDropped(QPointF src, QPointF dst)
 {
-    qDebug() <<"dbScene DROP from " << src <<" to " << dst;
+    //qDebug() <<"dbScene DROP from " << src <<" to " << dst;
 
     //undo hovered render on all
     for (int i=0; i<sigs.size(); ++i)
@@ -60,10 +60,13 @@ void QMapperDbScene::mouseDropped(QPointF src, QPointF dst)
 
     int srcIdx = getIndexOfSigNear(src, 10);
     int dstIdx = getIndexOfSigNear(dst_mod, 10);
-    qDebug() << "Scene UI: map from " << srcIdx <<" to " <<dstIdx;
+    qDebug() << "Scene UI: DROP from " << srcIdx <<" to " <<dstIdx;
 
     //make sure we don't have negative values
-    if ( (srcIdx != -1) & (dstIdx != -1) )
+    //NOTE: this where the UI knows to issue a map or unmap command...
+    if (mapExists(srcIdx, dstIdx) != -1)
+        Q_EMIT sceneUnMapSig(srcIdx, dstIdx);
+    else if ( (srcIdx != -1) & (dstIdx != -1) )
         Q_EMIT sceneMapSig(srcIdx, dstIdx);
 
     return;
@@ -91,7 +94,7 @@ void QMapperDbScene::mouseDragged(QPointF src, QPointF dst)
     // that interacts with UI.
 
     tempPathItem.setVisible(true);
-    qDebug() <<"dbScene DRAG from " << src <<" to " << dst;
+    //qDebug() <<"dbScene DRAG from " << src <<" to " << dst;
 
     //first, get the location of where we should be drawing
     mapPtSrc = src;

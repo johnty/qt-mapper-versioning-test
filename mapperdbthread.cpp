@@ -193,15 +193,19 @@ void mapperdbthread::mapActionFn(mapper_map map, mapper_record_action action)
     }
 }
 
-void mapperdbthread::tryMap(int src, int dst)
+void mapperdbthread::tryMap(int src, int dst, bool is_make)
 {
     QString src_sig = myDbNetworkModel.getSigItem(src)->text();
     QString src_dev = myDbNetworkModel.getSigItem(src)->child(0)->text();
     QString dst_sig = myDbNetworkModel.getSigItem(dst)->text();
     QString dst_dev = myDbNetworkModel.getSigItem(dst)->child(0)->text();
-    qDebug()<<"mapperDB trying to map from" <<src_dev<<":"<<src_sig<<
+    qDebug()<<"mapperDB trying to "<<is_make<<" map from" <<src_dev<<":"<<src_sig<<
               "to <<"<< dst_dev<<":"<<dst_sig;
-    makeMap(src_dev, dst_dev, src_sig, dst_sig);
+
+    if (is_make)
+        makeMap(src_dev, dst_dev, src_sig, dst_sig);
+    else
+        breakMap(src_dev, dst_dev, src_sig, dst_sig);
 }
 
 
@@ -330,8 +334,30 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
 
     map->push();
 
+
     myMaps.push_back(map);
 
+}
+
+void mapperdbthread::breakMap(QString sdev, QString ddev, QString ssig, QString dsig)
+{
+
+    //return; //TODO: get rid of myMaps!
+    for (int i=0; i<myMaps.size(); ++i)
+    {
+        mapper::Map* map = myMaps.at(i);
+        QString dst_sig(map->destination().signal().name().c_str());
+        QString dst_dev(map->destination().device().name().c_str());
+        QString src_sig(map->source().signal().name().c_str());
+        QString src_dev(map->source().device().name().c_str());
+
+        if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
+        {
+            map->unmap();
+            delete map;
+            myMaps.erase(myMaps.begin()+i);
+        }
+    }
 }
 
 void mapperdbthread::signalToDB(QString devname, const mapper::Signal signal, bool isAdd)

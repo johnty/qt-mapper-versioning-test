@@ -117,7 +117,7 @@ void CustomRect::mouseMoveEvent(QGraphicsSceneMouseEvent *e) {
         update();
     }
 
-    qDebug() <<"customrect mousemove:  "<< e->pos();
+    //qDebug() <<"customrect mousemove:  "<< e->pos();
 
     if (pressed) //dragging action for "map": need to tell parent to draw arrow!
     {

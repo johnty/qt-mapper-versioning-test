@@ -63,8 +63,8 @@ public:
     //***********************
     //TO mapper db:
     //***********************
-    void tryMap(int src, int dst);
-    void tryUnMap(int src, int dst); //implement me
+    void tryMap(int src, int dst, bool is_make = true);
+    //void tryUnMap(int src, int dst); //implement me
 
 
 
@@ -89,6 +89,7 @@ public:
     void refreshDbNetworkModel();
 
     void makeMap(QString sdev, QString ddev, QString ssig, QString dsig);
+    void breakMap(QString sdev, QString ddev, QString ssig, QString dsig);
 
     //TODO: rethink this kind of access, as well as similarly poor life choices
     mapper::Db* getDB() { return &db;}

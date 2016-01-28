@@ -124,6 +124,11 @@ int QMapperDbModel::mapExists(int srcIdx, int dstIdx)
     return -1;
 }
 
+int QMapperDbModel::mapExists(QString srcDev, QString srcSig, QString dstDev, QString dstSig)
+{
+
+}
+
 const std::vector<QString> QMapperDbModel::getDevs()
 {
     return mapperDevNames.toStdVector();
