@@ -14,8 +14,11 @@
 //    dummy test
 
 
-class QMapperDbModel
+class QMapperDbModel: public QObject
 {
+
+    Q_OBJECT
+
 public:
     QMapperDbModel();
 
@@ -35,6 +38,8 @@ public:
     const QString getSigDevName(int idx);
     const bool isOutputSig(int idx);
 
+
+
     //TODO: decide on QVector or std::vector and then make it consistent throughout!!
     const QVector<int>& getMapSrcs() { return mapperMapsSrc;}
     const QVector<int>& getMapDsts() { return mapperMapsDst;}
@@ -44,8 +49,16 @@ public:
     void removeDevice(QString devName);
     void removeSignal(QString devName, QString sigName);
 
+    void updateMap(QString srcDev, QString srcSig, QString dstDev, QString dstSig, bool isAdd = true);
+    void updateMap(int srcIdx, int dstIdx, bool isAdd);
+    void removeMap(int idx);
+    int mapExists(int srcIdx, int dstIdx);
+
     const std::vector<QString> getDevs();
     const std::vector<QString> getDevSigs(QString devname);
+
+Q_SIGNALS:
+    void dBUpdateSig();
 private:
 
     //TODO: more organized data structures

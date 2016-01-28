@@ -62,7 +62,9 @@ void QMapperDbScene::mouseDropped(QPointF src, QPointF dst)
     int dstIdx = getIndexOfSigNear(dst_mod, 10);
     qDebug() << "Scene UI: map from " << srcIdx <<" to " <<dstIdx;
 
-    Q_EMIT sceneMapSig(srcIdx, dstIdx);
+    //make sure we don't have negative values
+    if ( (srcIdx != -1) & (dstIdx != -1) )
+        Q_EMIT sceneMapSig(srcIdx, dstIdx);
 
     return;
     //code below is for testing drawing; we actually want to emit
@@ -183,6 +185,8 @@ void QMapperDbScene::addMap(int src_idx, int dst_idx, bool ifExistsRemove)
 
 int QMapperDbScene::mapExists(int src_idx, int dst_idx)
 {
+    //TODO: should we be checking UI code, or simply apply the map to model and then
+    // let model deal with it?
     int found_src = -1;
     for (int i=0; i<mapSrcIdxs.size(); ++i)
     {

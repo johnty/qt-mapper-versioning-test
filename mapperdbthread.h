@@ -95,6 +95,7 @@ public:
 
 Q_SIGNALS:
     void devUpdatedSig();
+    void sigUpdatedSig();
     void mapUpdatedSig();
 
 

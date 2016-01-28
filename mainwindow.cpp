@@ -19,8 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //dbRefreshTimer->start(1000); //update once per second
 
     //db update trigger
-    connect(myDB, SIGNAL(devUpdatedSig()), this, SLOT(refreshDB()));
+    //connect(myDB, SIGNAL(devUpdatedSig()), this, SLOT(refreshDB()));
     connect(myDB, SIGNAL(sigUpdatedSig()), this, SLOT(refreshDB()));
+    connect(myDB, SIGNAL(mapUpdatedSig()), this, SLOT(refreshDB()));
 
     //QStringList testList;
     //testList.append("device 1");
@@ -84,7 +85,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mapperScene->setMapperDbModel(mapperSceneDbModel);
     mapperScene->updateScene();
-    QObject::connect(this, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
+    //TODO: use this in the future... for now, refreshDB from MainWindow...
+    //QObject::connect(mapperSceneDbModel, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
+    QObject::connect(mapperSceneDbModel, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
 
     QObject::connect(mapperScene, SIGNAL(sceneMapSig(int, int)), this, SLOT(sceneMapSigReceived(int,int)));
 
@@ -234,8 +237,7 @@ void MainWindow::refreshDB()
 // we should do more in depth comparisons, or better yet hook up signal handlers to the instance of the class
         // another alternative hacky but better way may be tor
 
-        myDB->syncRenderModel(mapperSceneDbModel); //update the data
-        Q_EMIT dBUpdateSig();    //trigger render
+        syncAndRefreshScene();
 
     }
 }
@@ -257,4 +259,11 @@ void MainWindow::stopAndDeleteTestDevs()
         delete dev;
         testDevices.pop_back();
     }
+}
+
+void MainWindow::syncAndRefreshScene()
+{   //TODO: consider making the DbModels emit update commands
+    // to their attached scenes...
+    myDB->syncRenderModel(mapperSceneDbModel); //update the data
+    //Q_EMIT dBUpdateSig();    //trigger render
 }

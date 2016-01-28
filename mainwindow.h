@@ -48,6 +48,8 @@ private:
     void createAndStartTestDevs();
     void stopAndDeleteTestDevs();
 
+    void syncAndRefreshScene();
+
     Ui::MainWindow *ui;
     QStandardItemModel *listDevsTree;
     QStandardItemModel *listPropsTable;

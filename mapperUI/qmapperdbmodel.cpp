@@ -56,6 +56,74 @@ void QMapperDbModel::removeSignal(QString devName, QString sigName)
     }
 }
 
+void QMapperDbModel::updateMap(QString srcDev, QString srcSig, QString dstDev, QString dstSig, bool isAdd)
+{
+    int src = -1;
+    int dst = -1;
+    for (int i=0; i<mapperSignals.size(); ++i)
+    {
+        QStandardItem* signal = mapperSignals.at(i);
+        if ( (srcSig == signal->text()) && (srcDev == signal->child(0)->text()) )
+        {
+            qDebug() << "!!! Found " <<srcDev<<":"<<srcSig<<" at idx " <<i;
+            src = i;
+
+        }
+        if ( (dstSig == signal->text()) && (dstDev == signal->child(0)->text()) )
+        {
+            qDebug() << "!!! FOUND " <<dstDev<<":"<<dstSig<<" at idx " <<i;
+            dst = i;
+        }
+    }
+    if ((src != -1) && (dst != -1))
+        updateMap(src, dst, isAdd);
+}
+
+void QMapperDbModel::updateMap(int srcIdx, int dstIdx, bool isAdd)
+{
+    //cases:
+    //  1.)doesn't exist, want to add -> add
+    //  2.)doesn't exist, want to remove-> nothing (invalid)
+    //  3.)exists, want to add -> nothing (redundant add)
+    //  4.)exists, want to remove -> remove
+    int mapIndex = mapExists(srcIdx, dstIdx);
+    if ((mapIndex == -1) && isAdd)
+    {   //if its not there, and we want to add...
+        qDebug()<<"Adding Map to model...";
+        mapperMapsSrc.push_back(srcIdx);
+        mapperMapsDst.push_back(dstIdx);
+    }
+    else if ( (mapIndex != -1) && !isAdd )
+    {
+        removeMap(mapIndex);
+    }
+    Q_EMIT dBUpdateSig();
+}
+
+void QMapperDbModel::removeMap(int idx)
+{
+    mapperMapsSrc.removeAt(idx);
+    mapperMapsDst.removeAt(idx);
+}
+
+int QMapperDbModel::mapExists(int srcIdx, int dstIdx)
+{
+    //TODO: should we be checking UI code, or simply apply the map to model and then
+    // let model deal with it?
+    int found_src = -1;
+    for (int i=0; i<mapperMapsSrc.size(); ++i)
+    {
+        if (mapperMapsSrc.at(i) == srcIdx)
+        {
+            found_src = i;
+            if (mapperMapsDst.at(i) == dstIdx)
+                return i;
+        }
+    }
+    //not found
+    return -1;
+}
+
 const std::vector<QString> QMapperDbModel::getDevs()
 {
     return mapperDevNames.toStdVector();
@@ -181,4 +249,8 @@ void QMapperDbModel::syncWith(const QMapperDbModel &model)
     mapperSignals = model.mapperSignals;
     mapperMapsDst = model.mapperMapsDst;
     mapperMapsSrc = model.mapperMapsSrc;
+
+    Q_EMIT dBUpdateSig();
+
+    //TODO: we should probably emit update from here...
 }

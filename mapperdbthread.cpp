@@ -145,7 +145,7 @@ void mapperdbthread::mapActionHandler(mapper_map map, mapper_record_action actio
         //mapper_db_flush(db, 10, 0);
         break;
     }
-    qDebug() <<"mapperAction callled:" <<actionStr;
+    //qDebug() <<"mapperAction callled:" <<actionStr;
     FIX_ME->mapActionFn(map, action);
 }
 
@@ -153,25 +153,44 @@ void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
 {
     //this call might suggest an addition to the Signal wrapper class?
     QString devname(mapper_device_name( mapper_signal_device(sig)));
-    //we assume just two cases, add or remove
     mapper::Signal csignal(sig);
+
+    //we assume just two cases, add or remove
     switch (action) {
     case MAPPER_ADDED:
-        qDebug()<<"sigAction: adding sig";
+        qDebug()<<"sigAction: adding " <<devname<<":"<<csignal.name().c_str();
         signalToDB(devname, csignal, true);
-        Q_EMIT devUpdatedSig();
+        Q_EMIT sigUpdatedSig();
         break;
-     case MAPPER_REMOVED:
-        qDebug()<<"sigAction: removing sig";
+    case MAPPER_REMOVED:
         signalToDB(devname, csignal, false);
-        Q_EMIT devUpdatedSig();
+        qDebug()<<"sigAction: removing " <<devname<<":"<<csignal.name().c_str();
+        Q_EMIT sigUpdatedSig();
         break;
     }
 }
 
 void mapperdbthread::mapActionFn(mapper_map map, mapper_record_action action)
 {
+    //add to local db:
+    mapper::Map cmap(map, 0, 0);
+    QString src_sig(cmap.source().signal().name().c_str());
+    QString src_dev(cmap.source().device().name().c_str());
+    QString dst_sig(cmap.destination().signal().name().c_str());
+    QString dst_dev(cmap.destination().device().name().c_str());
 
+    switch (action) {
+    case MAPPER_ADDED:
+        qDebug()<<"mapAction: adding map from "<< src_dev<<":"<<src_sig<<" to " <<dst_dev<<":"<<dst_sig;
+        myDbNetworkModel.updateMap(src_dev, src_sig, dst_dev, dst_sig);
+        Q_EMIT mapUpdatedSig();
+        break;
+     case MAPPER_REMOVED:
+        qDebug()<<"mapAction: removing map" << src_dev<<":"<<src_sig<<" to " <<dst_dev<<":"<<dst_sig;
+        myDbNetworkModel.updateMap(src_dev, src_sig, dst_dev, dst_sig, false);
+        Q_EMIT mapUpdatedSig();
+        break;
+    }
 }
 
 void mapperdbthread::tryMap(int src, int dst)
@@ -319,9 +338,11 @@ void mapperdbthread::signalToDB(QString devname, const mapper::Signal signal, bo
 {
     QString sig_name(signal.name().c_str());
     mapper_direction dir = signal.property("direction");
-    bool is_input = true;
-    if (dir == MAPPER_DIR_OUTGOING)
-        is_input = false;
+    bool is_input = false;
+    //!!!!!NOTE!!!!!: it seems like an output port is reported as "MAPPER_DIR_ANY" -
+    //! i remember Joe saying something about this... check with him...
+    if (dir == MAPPER_DIR_INCOMING)
+        is_input = true;
     if (isAdd)
         myDbNetworkModel.addSignal(devname, sig_name, is_input);
     else
