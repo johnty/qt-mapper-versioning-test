@@ -173,7 +173,7 @@ void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
 void mapperdbthread::mapActionFn(mapper_map map, mapper_record_action action)
 {
     //add to local db:
-    mapper::Map cmap(map, 0, 0);
+    mapper::Map cmap(map);
     QString src_sig(cmap.source().signal().name().c_str());
     QString src_dev(cmap.source().device().name().c_str());
     QString dst_sig(cmap.destination().signal().name().c_str());
@@ -303,30 +303,29 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
     mapper::Device srcdev = db.device_by_name(sdev.toStdString());
     mapper::Signal *src_sig = NULL;
 
-    mapper::Signal::Query qry1 = srcdev.signals(MAPPER_DIR_OUTGOING);
-    for (; qry1 != qry1.end(); qry1++)
+
+    //mapper::Signal::Query qry1 = srcdev.signals(MAPPER_DIR_OUTGOING);
+    for (auto const& sig : db.signals(MAPPER_DIR_OUTGOING))
     {
-        mapper::Signal sig = *qry1;
+        //mapper::Signal sig = *qry1;
         QString sig_name = sig.name().c_str();
         if (sig_name == ssig)
         {
-            src_sig = &sig;
+            //src_sig = &sig;
             qDebug()<<"found src signal " <<sig_name<< "from device " << sdev;
         }
     }
 
     mapper::Device dstdev = db.device_by_name(ddev.toStdString());
-    mapper::Signal *dst_sig = NULL;
+    //mapper::Signal *dst_sig = NULL;
 
-    mapper::Signal::Query qry2 = dstdev.signals(MAPPER_DIR_INCOMING);
-    for (; qry2 != qry2.end(); qry2++)
+    for (auto const& sig : db.signals(MAPPER_DIR_INCOMING))
     {
-        mapper::Signal sig = *qry2;
         QString sig_name = sig.name().c_str();
         if (sig_name == dsig)
         {
-            dst_sig = &sig;
-            qDebug()<<"found dst signal " <<sig_name<< "from device " << sdev;
+            //dst_sig = &sig;
+            qDebug()<<"found dst signal " <<sig_name<< "from device " << ddev;
         }
     }
     mapper::Map* map = new mapper::Map(srcdev.signal(ssig.toStdString()),
@@ -334,6 +333,12 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
 
     map->push();
 
+    //test: query signals now...
+//    for (auto const& sig : db.signals(MAPPER_DIR_ANY))
+//    {
+//        mapper_direction dir = sig.property("direction");
+//        qDebug() << sig.name().c_str() << "DIRECTION = " << (int)dir;
+//    }
 
     myMaps.push_back(map);
 
@@ -341,8 +346,24 @@ void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString d
 
 void mapperdbthread::breakMap(QString sdev, QString ddev, QString ssig, QString dsig)
 {
+//    // not best way
+//    for (auto map : db.maps())
+//    {
 
-    //return; //TODO: get rid of myMaps!
+//        for (int i=0; i<map.num_sources(); i++)
+//        {
+//            QString src_dev(map.source().device().name().c_str());
+//            QString src_sig(map.source().signal().name().c_str());
+//            QString dst_dev(map.destination().device().name().c_str());
+//            QString dst_sig(map.destination().signal().name().c_str());
+//            //you know, std::string == works too...
+//            if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
+//            {
+//                map.unmap();
+//            }
+//        }
+//    }
+//    return; //TODO: get rid of myMaps!
     for (int i=0; i<myMaps.size(); ++i)
     {
         mapper::Map* map = myMaps.at(i);
@@ -373,4 +394,8 @@ void mapperdbthread::signalToDB(QString devname, const mapper::Signal signal, bo
         myDbNetworkModel.addSignal(devname, sig_name, is_input);
     else
         myDbNetworkModel.removeSignal(devname, sig_name);
+    if (is_input)
+        qDebug() <<"_______ "<<sig_name<<" is INPUT";
+    else
+        qDebug() <<"_______ "<<sig_name<<" is OUTPUT/ANY";
 }
