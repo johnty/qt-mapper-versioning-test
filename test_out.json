@@ -4,7 +4,7 @@
             {
                 "clipMax": "none",
                 "clipMin": "none",
-                "expression": "d0=s0*(-0.283296)+(0.455)",
+                "expression": "d0=s0",
                 "mode": "linear",
                 "mute": 0,
                 "range": [
@@ -95,6 +95,28 @@
             }
         ],
         "fileversion": "dot-1",
+        "signals": [
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "head/tilt"
+            },
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "rib/accel/y"
+            },
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "rib/accel/x"
+            },
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "head/roll"
+            }
+        ],
         "sources": [
             {
                 "device": "spine.1",
@@ -119,7 +141,7 @@
             {
                 "device": "spine.1",
                 "id": "s4",
-                "signal": "rib/motion"
+                "signal": "head/roll"
             }
         ]
     }

@@ -25,7 +25,7 @@ MapperJsonConfig::MapperJsonConfig(const QString filePath, QIODevice::OpenModeFl
     if (jsonDoc.isObject()) //the top level is a "mapping" object
     {
         mapperConfigObject = jsonDoc.object();
-        ParseFile(mapperConfigObject);
+        ParseJsonObject(mapperConfigObject);
     }
 
 }
@@ -44,7 +44,7 @@ bool MapperJsonConfig::SaveConfigToJSONFile(QString filePath)
     return true;
 }
 
-bool MapperJsonConfig::ParseFile(const QJsonObject& json_obj)
+bool MapperJsonConfig::ParseJsonObject(const QJsonObject& json_obj)
 {
     for (QJsonObject::const_iterator it = json_obj.begin(); it != json_obj.end(); it++)
     {
@@ -104,6 +104,22 @@ bool MapperJsonConfig::ParseFile(const QJsonObject& json_obj)
                     qDebug()<<"     mute: "<<mute<<" mode: "<<mode<<" expr: "<<expr;
                     //TODO:
                 }
+                qDebug() << "***SIGNALS (FLAT view)***";
+                QJsonArray sig_arr = val.toObject()["signals"].toArray();
+                for (int i=0; i<sig_arr.size(); i++)
+                {
+                    QJsonObject curr_sig = sig_arr.at(i).toObject();
+                    QString sig_name = curr_sig["name"].toString();
+                    QString sig_devname = curr_sig["device"].toString();
+                    QString direction = curr_sig["direction"].toString();
+                    qDebug() <<" Parsed signal: " << sig_devname<<"/"<<sig_name<<" dir= "<<direction;
+                    MAPPER_SIGNAL signal;
+                    signal.name = sig_name;
+                    signal.dev = sig_devname;
+                    signal.direction = direction;
+                    mySignals.append(signal);
+                }
+
             }
             toDB();
             fromDB();

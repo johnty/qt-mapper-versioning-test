@@ -21,6 +21,21 @@ MapperData::~MapperData()
 
 void MapperData::toDB()
 {
+    //****UI DB
+    myUIDbModel.clearAll();
+    for (int i=0; i<mySignals.size(); i++)
+    {
+        MAPPER_SIGNAL sig = mySignals.at(i);
+        bool isInput = true;
+        if (sig.direction == "output")
+            isInput = false;
+        myUIDbModel.addSignal(sig.dev, sig.name, isInput);
+    }
+    for (int i=0; i<myUIDbModel.getNumSigs(); i++)
+        qDebug() << "sig "<<i<<":"<< myUIDbModel.getSigName(i);
+
+    return;
+    //****SQL DB
     //drop existing tables, and make new ones
     dropAllTables();
     createTables();
@@ -38,6 +53,9 @@ void MapperData::toDB()
             if (query.exec())
                 qDebug() << "added values into db";
         }
+        // similarly for other objects, but wait until we know what exactlly
+        // we want to store in this central db before actually doing it,
+        // since we're not directly accessing it and calling the model objects anyway at this point.
 
 
         query.clear();
@@ -46,6 +64,9 @@ void MapperData::toDB()
     {
         qWarning("unable to create in-memory db for storing mapping data!");
     }
+
+    //UI DB
+
 }
 
 void MapperData::fromDB()
@@ -68,6 +89,16 @@ void MapperData::fromDB()
     {
         qWarning("unable to access in-memory db for storing mapping data!");
     }
+}
+
+void MapperData::FromUIDbModel(const QMapperDbModel *model)
+{
+    myUIDbModel.syncWith(*model);
+}
+
+void MapperData::ToUIDbModel(QMapperDbModel *modelToSync)
+{
+    modelToSync->syncWith(myUIDbModel);
 }
 
 void MapperData::createTables()

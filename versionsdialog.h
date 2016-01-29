@@ -21,6 +21,10 @@ public:
 
     void fromMapperDBView(const QMapperDbModel* dbviewmodell);
 
+    void loadHistory(QString folder_path);
+
+    const QMapperDbModel *getMostRecent();
+
 private Q_SLOTS:
 
 

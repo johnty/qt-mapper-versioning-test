@@ -128,7 +128,7 @@ void QMapperDbScene::mouseDragged(QPointF src, QPointF dst)
         if ((i == hoverIdx) && (srcIdx != hoverIdx))
         {
             sigs.at(i)->setHovered(true);
-            qDebug()<<"sig hover at " <<i;
+            //qDebug()<<"sig hover at " <<i;
         }
         else
         {   //unfortunately we have to also set everything else to
@@ -178,7 +178,7 @@ void QMapperDbScene::addMap(int src_idx, int dst_idx, bool ifExistsRemove)
     else {
         mapSrcIdxs.push_back(src_idx);
         mapDstIdxs.push_back(dst_idx);
-        qDebug() <<"Main Scene added map from" <<src_idx << " to " << dst_idx;
+        qDebug() <<"Main Scene added/updated map from" <<src_idx << " to " << dst_idx;
     }
 
     redrawMapPaths();
@@ -399,7 +399,7 @@ int QMapperDbScene::getIndexOfSigNear(QPointF pos, float len)
 
         if (dragHitRect.intersects(sigs.at(i)->boundingRectAbs()))
         {
-            qDebug() << "hit sig # " << i;
+            //qDebug() << "hit sig # " << i;
             foundIdx = i;
             break; //assume no overlapping boxes...
         }
