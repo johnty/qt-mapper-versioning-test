@@ -28,6 +28,8 @@ public:
 private Q_SLOTS:
 
 
+    void on_listView_pressed(const QModelIndex &index);
+
 private:
 
     void loadMappingFromFile(QString filepath);
@@ -35,6 +37,9 @@ private:
     Ui::VersionsDialog *ui;
 
     QVector<MapperJsonConfig*> myVersions;
+
+    QStandardItemModel* versionList;
+    QStringList annotationList;
 };
 
 #endif // VERSIONSDIALOG_H

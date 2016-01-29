@@ -111,16 +111,16 @@ MainWindow::MainWindow(QWidget *parent) :
     popupVersionsDlg->move(this->window()->x()+this->window()->width(), this->window()->y());
 
 
+    //note: depending on project.user settings,
+    //this folder may have to be corrected!
     QDir dir(QDir::current());
     dir.cdUp(); dir.cdUp(); dir.cdUp();; dir.cdUp();
     QString app_root = dir.absolutePath();
-
     //popupVersionsDlg->testLoadSaveJSON(file);
-    QString version_dir = app_root+"/versiondata";
 
-    //popupVersionsDlg->loadHistory(version_dir);
-    QString file = version_dir+"/mapping.json";
-    popupVersionsDlg->testLoadSaveJSON(file);
+    //load all the previous versions in this folder:
+    QString version_dir = app_root+"/versiondata";
+    popupVersionsDlg->loadHistory(version_dir);
 
     const QMapperDbModel* versionModel = popupVersionsDlg->getMostRecent();
     if (versionModel)
@@ -150,7 +150,10 @@ void MainWindow::resizeEvent(QResizeEvent* e)
 {
     //qDebug() <<"main resize";
     if ( (popupVersionsDlg != NULL) && (!popupVersionsDlg->isHidden()) )
-        popupVersionsDlg->move(this->window()->x()+this->window()->width(), this->window()->y());
+    {
+        popupVersionsDlg->move(this->window()->x()+this->window()->width()
+                               , this->window()->y());
+    }
 }
 
 void MainWindow::syncTreeToTable(const QStandardItemModel* tree, QStandardItemModel* table)

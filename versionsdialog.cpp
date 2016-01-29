@@ -5,8 +5,10 @@ VersionsDialog::VersionsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::VersionsDialog)
 {
-    ui->setupUi(this);
 
+    ui->setupUi(this);
+    versionList = new QStandardItemModel(this);
+    ui->listView->setModel(versionList);
 }
 
 VersionsDialog::~VersionsDialog()
@@ -51,7 +53,30 @@ void VersionsDialog::loadHistory(QString folder_path)
         qDebug() <<"found json file: " << file;
         QString full_path = folder_path+"/"+file;
         loadMappingFromFile(full_path);
+        QStandardItem* item = new QStandardItem(file);
+        versionList->appendRow(item);
     }
+    nameFilter = QStringList("*.txt");
+    QStringList annoFileList = directory.entryList(nameFilter);
+    for (auto &file : annoFileList)
+    {
+        qDebug()<<"found txt file: " << file;
+        QString full_path = folder_path+"/"+file;
+        QFile txtFile(full_path);
+        if (!txtFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            qDebug()<<"error reading txt annotation!";
+        }
+        else
+        {
+            //expect a single line only...
+            QTextStream in(&txtFile);
+            QString annoText = in.readLine();
+            qDebug() <<"txt contents: " <<annoText;
+            annotationList.append(annoText);
+        }
+    }
+    versionList->appendRow(new QStandardItem("working version"));
 }
 
 const QMapperDbModel *VersionsDialog::getMostRecent()
@@ -83,4 +108,12 @@ void VersionsDialog::loadMappingFromFile(QString filepath)
 
     }
     myfile.close();
+}
+
+void VersionsDialog::on_listView_pressed(const QModelIndex &index)
+{
+    qDebug()<<"version pressed" << index.row();
+    if (index.row() < annotationList.size())
+        ui->annotationEdit->setText(annotationList.at(index.row()));
+
 }
