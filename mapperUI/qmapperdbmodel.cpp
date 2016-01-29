@@ -234,6 +234,11 @@ const QString QMapperDbModel::getSigDevName(int idx)
     return mapperSignals.at(idx)->child(0)->text();
 }
 
+const QString QMapperDbModel::getSigDir(int idx)
+{
+    return mapperSignals.at(idx)->child(1)->text();
+}
+
 const bool QMapperDbModel::isOutputSig(int idx)
 {
     return (mapperSignals.at(idx)->child(1)->text() == "output");

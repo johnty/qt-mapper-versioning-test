@@ -29,7 +29,9 @@ void VersionsDialog::testLoadSaveJSON(QString filename)
     if (myVersions.size())
     {
         qDebug() <<"saving to file " <<file;
-        if (myVersions.at(0)->SaveConfigToJSONFile(file))
+
+        myVersions.back()->FromUIDbToJson(); //sync ui with
+        if (myVersions.back()->SaveConfigToJSONFile(file))
             qDebug() << "save success!";
     }
 }
@@ -76,6 +78,7 @@ void VersionsDialog::loadMappingFromFile(QString filepath)
         //mapperTextViewTab->setText(data);
 
         MapperJsonConfig* mapperJSON = new MapperJsonConfig(filepath, QIODevice::ReadOnly);
+
         myVersions.push_back(mapperJSON);
 
     }

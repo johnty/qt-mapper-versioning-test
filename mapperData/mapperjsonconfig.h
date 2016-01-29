@@ -18,13 +18,16 @@ public:
     bool SaveConfigToJSONFile(QString filePath);
 
     //NOTE: existing format contains just list of "maps"
-    const QList<MAPPER_SRC_DST>* getSrcs() { return &mySources; }
-    const QList<MAPPER_SRC_DST>* getDests() { return &myDestinations; }
+    const QList<MAPPER_SRC_DST>* getSrcs() { return &mySourceList; }
+    const QList<MAPPER_SRC_DST>* getDests() { return &myDestinationList; }
     const QList<QString>* getConns() { return &myConnectionExprs; }
 
+    void FromUIDbToJson();
+
 private:
-    QJsonObject mapperConfigObject;
+    QJsonObject myJsonMapperConfig;
     bool ParseJsonObject(const QJsonObject& json_doc);
+
     //TODO: data to hold other stuff...
 };
 

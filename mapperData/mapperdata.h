@@ -54,8 +54,8 @@ protected:
     QSqlDatabase myDB;
     QMapperDbModel myUIDbModel;
 
-    QList<MAPPER_SRC_DST> mySources; //map sources
-    QList<MAPPER_SRC_DST> myDestinations; //map destinations
+    QList<MAPPER_SRC_DST> mySourceList; //map sources
+    QList<MAPPER_SRC_DST> myDestinationList; //map destinations
     QList<QString> myConnectionExprs; //map expression strings
     QList<MAPPER_SIGNAL> mySignals; //flat view of all signals
 

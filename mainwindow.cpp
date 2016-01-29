@@ -114,10 +114,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir dir(QDir::current());
     dir.cdUp(); dir.cdUp(); dir.cdUp();; dir.cdUp();
     QString app_root = dir.absolutePath();
-    QString file = app_root+"/mapping.json";
+
     //popupVersionsDlg->testLoadSaveJSON(file);
     QString version_dir = app_root+"/versiondata";
-    popupVersionsDlg->loadHistory(version_dir);
+
+    //popupVersionsDlg->loadHistory(version_dir);
+    QString file = version_dir+"/mapping.json";
+    popupVersionsDlg->testLoadSaveJSON(file);
 
     const QMapperDbModel* versionModel = popupVersionsDlg->getMostRecent();
     if (versionModel)

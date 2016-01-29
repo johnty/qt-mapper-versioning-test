@@ -34,6 +34,21 @@ void MapperData::toDB()
     for (int i=0; i<myUIDbModel.getNumSigs(); i++)
         qDebug() << "sig "<<i<<":"<< myUIDbModel.getSigName(i);
 
+    //associate each source-destination pair in originall format as a map!
+    // one assumption is the two lists are same in length, which based on my
+    // understanding of the format, it should be...
+    if (mySourceList.size() == myDestinationList.size())
+    {
+        for (int i=0; i<mySourceList.size(); i++)
+        {
+            QString src_dev = mySourceList.at(i).dev;
+            QString src_sig = mySourceList.at(i).sig;
+            QString dst_dev = myDestinationList.at(i).dev;
+            QString dst_sig = myDestinationList.at(i).sig;
+            myUIDbModel.updateMap(src_dev, src_sig, dst_dev, dst_sig);
+        }
+    }
+
     return;
     //****SQL DB
     //drop existing tables, and make new ones
@@ -45,11 +60,11 @@ void MapperData::toDB()
         //sources:
         query.prepare("INSERT INTO sources (id, dev, sig)"
                       "VALUES (:id, :dev, :sig)");
-        for (int i=0; i<mySources.size()-1; i++)
+        for (int i=0; i<mySourceList.size()-1; i++)
         {
-            query.bindValue(":id", mySources.at(i).id);
-            query.bindValue(":dev", mySources.at(i).dev);
-            query.bindValue(":sig", mySources.at(i).sig);
+            query.bindValue(":id", mySourceList.at(i).id);
+            query.bindValue(":dev", mySourceList.at(i).dev);
+            query.bindValue(":sig", mySourceList.at(i).sig);
             if (query.exec())
                 qDebug() << "added values into db";
         }

@@ -1,72 +1,5 @@
 {
     "mapping": {
-        "connections": [
-            {
-                "clipMax": "none",
-                "clipMin": "none",
-                "expression": "d0=s0",
-                "mode": "linear",
-                "mute": 0,
-                "range": [
-                    -1.570796012878418,
-                    1.570796012878418,
-                    0.89999997615814209,
-                    0.0099999997764825821
-                ]
-            },
-            {
-                "clipMax": "none",
-                "clipMin": "none",
-                "expression": "d1=s1*(5)+(5)",
-                "mode": "linear",
-                "mute": 0,
-                "range": [
-                    -1,
-                    1,
-                    0,
-                    10
-                ]
-            },
-            {
-                "clipMax": "none",
-                "clipMin": "none",
-                "expression": "d2=s2*(25)+(30)",
-                "mode": "linear",
-                "mute": 0,
-                "range": [
-                    -1,
-                    2,
-                    5,
-                    80
-                ]
-            },
-            {
-                "clipMax": "none",
-                "clipMin": "none",
-                "expression": "d3=s3*(0.63662)+(1)",
-                "mode": "linear",
-                "mute": 0,
-                "range": [
-                    -1.570796012878418,
-                    1.570796012878418,
-                    0,
-                    2
-                ]
-            },
-            {
-                "clipMax": "none",
-                "clipMin": "none",
-                "expression": "d4=s4*(-4.66667)+(70)",
-                "mode": "linear",
-                "mute": 0,
-                "range": [
-                    0,
-                    15,
-                    70,
-                    0
-                ]
-            }
-        ],
         "destinations": [
             {
                 "device": "clef.1",
@@ -92,29 +25,6 @@
                 "device": "clef.1",
                 "id": "d4",
                 "signal": "melody2harmony.1/mix"
-            }
-        ],
-        "fileversion": "dot-1",
-        "signals": [
-            {
-                "device": "spine.1",
-                "direction": "output",
-                "name": "head/tilt"
-            },
-            {
-                "device": "spine.1",
-                "direction": "output",
-                "name": "rib/accel/y"
-            },
-            {
-                "device": "spine.1",
-                "direction": "output",
-                "name": "rib/accel/x"
-            },
-            {
-                "device": "spine.1",
-                "direction": "output",
-                "name": "head/roll"
             }
         ],
         "sources": [
@@ -144,5 +54,57 @@
                 "signal": "head/roll"
             }
         ]
-    }
+    },
+    "signals": [
+        {
+            "device": "spine.1",
+            "direction": "output",
+            "name": "head/tilt"
+        },
+        {
+            "device": "spine.1",
+            "direction": "output",
+            "name": "rib/accel/y"
+        },
+        {
+            "device": "spine.1",
+            "direction": "output",
+            "name": "rib/accel/x"
+        },
+        {
+            "device": "spine.1",
+            "direction": "output",
+            "name": "head/roll"
+        },
+        {
+            "device": "clef.1",
+            "direction": "input",
+            "name": "munger.1/pitch"
+        },
+        {
+            "device": "clef.1",
+            "direction": "input",
+            "name": "melody2harmony.1/threshold/low"
+        },
+        {
+            "device": "clef.1",
+            "direction": "input",
+            "name": "melody2harmony.1/threshold/high"
+        },
+        {
+            "device": "clef.1",
+            "direction": "input",
+            "name": "munger.1/pitch-var"
+        },
+        {
+            "device": "clef.1",
+            "direction": "input",
+            "name": "melody2harmony.1/mix"
+        },
+        {
+            "device": "another_dev",
+            "direction": "input",
+            "name": "some_random_thing"
+        }
+    ]
 }

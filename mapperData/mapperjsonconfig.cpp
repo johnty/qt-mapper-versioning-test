@@ -24,15 +24,19 @@ MapperJsonConfig::MapperJsonConfig(const QString filePath, QIODevice::OpenModeFl
 
     if (jsonDoc.isObject()) //the top level is a "mapping" object
     {
-        mapperConfigObject = jsonDoc.object();
-        ParseJsonObject(mapperConfigObject);
+        myJsonMapperConfig = jsonDoc.object();
+        ParseJsonObject(myJsonMapperConfig);
+        toDB();
     }
 
 }
 
 bool MapperJsonConfig::SaveConfigToJSONFile(QString filePath)
 {
-    QJsonDocument jsonDoc(mapperConfigObject);
+    //TODO: remove test
+    FromUIDbToJson();
+    //END TODO
+    QJsonDocument jsonDoc(myJsonMapperConfig);
     QFile saveFile(filePath);
     if (!saveFile.open((QIODevice::WriteOnly)))
     {
@@ -42,6 +46,61 @@ bool MapperJsonConfig::SaveConfigToJSONFile(QString filePath)
     saveFile.write(jsonDoc.toJson());
     saveFile.close();
     return true;
+}
+
+void MapperJsonConfig::FromUIDbToJson()
+{
+    //clear it.
+    myJsonMapperConfig = QJsonObject();
+
+    //mapping:
+    //  sources list s0-sN
+    //  destinations list d0-dN
+    QJsonArray srcArray;
+    QJsonArray dstArray;
+    //NOTE: this heavily relies on the mapSrcs and mapDsts
+    // to be in sync, kind of like what was in the original json file actually...
+    for (int i=0; i<myUIDbModel.getMapSrcs().size(); i++)
+    {
+        QJsonObject srcObj;
+        QString id = "s"+QString::number(i);
+        int sigIdx = myUIDbModel.getMapSrcs().at(i);
+
+        //insert puts it at 0
+        srcObj.insert("signal", myUIDbModel.getSigName(sigIdx));
+        srcObj.insert("device", myUIDbModel.getSigDevName(sigIdx));
+        srcObj.insert("id", id);
+
+        QJsonObject dstObj;
+        id = "d"+QString::number(i);
+        sigIdx = myUIDbModel.getMapDsts().at(i);
+        dstObj.insert("signal", myUIDbModel.getSigName(sigIdx));
+        dstObj.insert("device", myUIDbModel.getSigDevName(sigIdx));
+        dstObj.insert("id", id);
+
+        srcArray.append(srcObj);
+        dstArray.append(dstObj);
+
+
+    }
+    QJsonObject mappingsObj;
+    mappingsObj.insert("sources", srcArray);
+    mappingsObj.insert("destinations", dstArray);
+
+    myJsonMapperConfig.insert("mapping", mappingsObj);
+
+    //signal list:
+    QJsonArray sigsArray;
+    for (int i=0; i<myUIDbModel.getNumSigs(); i++)
+    {
+        QJsonObject sig;
+        sig.insert("name", myUIDbModel.getSigName(i));
+        sig.insert("device", myUIDbModel.getSigDevName(i));
+        sig.insert("direction", myUIDbModel.getSigDir(i));
+        sigsArray.append(sig);
+
+    }
+    myJsonMapperConfig.insert("signals", sigsArray);
 }
 
 bool MapperJsonConfig::ParseJsonObject(const QJsonObject& json_obj)
@@ -70,7 +129,7 @@ bool MapperJsonConfig::ParseJsonObject(const QJsonObject& json_obj)
                     mapper_src.id = id;
                     mapper_src.dev = device;
                     mapper_src.sig = signal;
-                    mySources.append(mapper_src);
+                    mySourceList.append(mapper_src);
 
                 }
                 qDebug() << "***DESTINATIONS***";
@@ -86,7 +145,7 @@ bool MapperJsonConfig::ParseJsonObject(const QJsonObject& json_obj)
                     mapper_dst.id = id;
                     mapper_dst.dev = device;
                     mapper_dst.sig = signal;
-                    myDestinations.append(mapper_dst);
+                    myDestinationList.append(mapper_dst);
                 }
                 qDebug() << "***CONNECTIONS***";
                 QJsonArray con_arr = val.toObject()["connections"].toArray();
