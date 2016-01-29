@@ -90,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mapperScene->setMapperDbModel(mapperSceneDbModel);
     mapperScene->setMapperDbModelActive(mapperSceneDbModelActive);
 
-    mapperScene->updateScene();
     //TODO: use this in the future... for now, refreshDB from MainWindow...
     //QObject::connect(mapperSceneDbModel, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
     QObject::connect(mapperSceneDbModel, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
@@ -221,14 +220,21 @@ void MainWindow::versionPressed(int idx)
 {
     qDebug()<< "MainWindow: version sig " <<idx;
     if (popupVersionsDlg->getVersionModel(idx) != nullptr) {
-        qDebug()<< " old size = "<< mapperSceneDbModel->getMapSrcs().size();
+        qDebug()<< " old size = "<< mapperSceneDbModelActive->getMapSrcs().size();
+        mapperScene->clearActiveLayer();//NOTE: we have to clear the layer
+        // before adding new stuff, otherwise the update doesn't remove stuff proerply.
+        // TODO: this is an undesired behaviour of how the scene and scene layer update!!
         mapperSceneDbModelActive->syncWith(*popupVersionsDlg->getVersionModel(idx));
-        qDebug()<< " new size = "<< mapperSceneDbModel->getMapSrcs().size();
+        qDebug()<< " new size = "<< mapperSceneDbModelActive->getMapSrcs().size();
         //mapperScene->update();
+        mapperScene->setActiveLayerVisible(true);
+        mapperScene->updateScene();
     }
-    else
-        qDebug() <<"did not get right model from version dlg";
-
+    else {
+        qDebug() <<"index > stored versions; clicked on working version";
+        //set top layer to invisible
+        mapperScene->setActiveLayerVisible(false);
+    }
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)

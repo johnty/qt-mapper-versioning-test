@@ -25,6 +25,7 @@ public:
     void addMap(int src_idx, int dst_idx);
     void updateMapPaths();
     void removeMapPaths();
+    void clearGroup();
 
     void removeSigRects();
 

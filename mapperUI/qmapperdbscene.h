@@ -32,6 +32,7 @@ public:
 
     void setMapperDbModel(QMapperDbModel* model);
     void setMapperDbModelActive(QMapperDbModel* model);
+    void clearActiveLayer();
 
     void updateTempPath();
 
@@ -42,6 +43,8 @@ public:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
 
     void setAlpha(int alpha);
+
+    void setActiveLayerVisible(bool visible) { activeLayer.setVisible(visible); }
 
 Q_SIGNALS:
     void sceneMapSig(int srcIdx, int dstIdx);

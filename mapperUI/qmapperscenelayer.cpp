@@ -21,7 +21,8 @@ void QMapperSceneLayer::updateLayer()
 
     if (dbModel != NULL)
     {
-        qDebug() <<"updateLayer from dbModel...";
+        qDebug() <<"updateLayer from dbModel..., current items = "<<myGraphicsItems.childItems().count();
+
 
         //
         //remove stuff
@@ -29,6 +30,12 @@ void QMapperSceneLayer::updateLayer()
 
         removeSigRects();//for group
         removeMapPaths();
+
+        mapDsts.clear();
+        mapSrcs.clear();
+        mapDstIdxs.clear();
+        mapSrcIdxs.clear();
+
         myGraphicsItems.removeFromGroup(tempPathItem);
         //removeItem(&tempPathItem);//note: find way to avoid this bit
 
@@ -78,6 +85,7 @@ void QMapperSceneLayer::updateLayer()
             myGraphicsItems.addToGroup(sigrect);
         }
 
+        qDebug()<<"mapperSceneLayer numSrcs = " <<dbModel->getMapSrcs().size();
         //load the map objects
         for (int i=0; i<dbModel->getMapSrcs().size(); ++i)
         {
@@ -119,7 +127,7 @@ void QMapperSceneLayer::addMap(int src_idx, int dst_idx)
 {
     mapSrcIdxs.push_back(src_idx);
     mapDstIdxs.push_back(dst_idx);
-    qDebug() <<"Layer added map from" <<src_idx << " to " << dst_idx;
+    //qDebug() <<"Layer added map from" <<src_idx << " to " << dst_idx;
     updateMapPaths();
 }
 
@@ -165,6 +173,7 @@ void QMapperSceneLayer::updateMapPaths()
 
 void QMapperSceneLayer::removeMapPaths()
 {
+    qDebug() <<"sceneLayer clearing map paths: " <<mapPathItems.size() << "MapSrcs = " <<mapSrcs.size();
     for (int i=0; i<mapPathItems.size(); ++i)
     {
         //removeItem(mapPathItems.at(i)); //scene
@@ -176,6 +185,11 @@ void QMapperSceneLayer::removeMapPaths()
         delete item;
         mapPathItems.pop_back();
     }
+}
+
+void QMapperSceneLayer::clearGroup()
+{
+
 }
 
 void QMapperSceneLayer::removeSigRects()

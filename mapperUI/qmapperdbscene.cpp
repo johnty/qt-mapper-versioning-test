@@ -178,7 +178,7 @@ void QMapperDbScene::addMap(int src_idx, int dst_idx, bool ifExistsRemove)
     else {
         mapSrcIdxs.push_back(src_idx);
         mapDstIdxs.push_back(dst_idx);
-        qDebug() <<"Main Scene added/updated map from" <<src_idx << " to " << dst_idx;
+        //qDebug() <<"Main Scene added/updated map from" <<src_idx << " to " << dst_idx;
     }
 
     redrawMapPaths();
@@ -256,6 +256,7 @@ void QMapperDbScene::updateMapPaths()
 
 void QMapperDbScene::removeMapPaths()
 {
+    qDebug() <<"scene clearing map paths: " <<mapPathItems.size();
     for (int i=0; i<mapPathItems.size(); ++i)
     {
         removeItem(mapPathItems.at(i));
@@ -290,6 +291,8 @@ void QMapperDbScene::updateScene()
     activeLayer.updateLayer();
     removeItem(activeLayer.getLayerItems());
 
+    qDebug() << "updatedScene, num children = " << QGraphicsScene::children().count();
+
     // set of drawings for the entire scene:
     if (dbModel != NULL)
     {
@@ -309,6 +312,7 @@ void QMapperDbScene::updateScene()
         removeMapPaths();
         removeItem(&tempPathItem);//note: find way to avoid this bit
         clear(); //probably won't need this since we've manually removed everything...
+        //  actually, probably should have it since we're not sure if thats the case...
 
         //add stuff back
 
@@ -371,11 +375,11 @@ void QMapperDbScene::updateScene()
             addMap(dbModel->getMapSrcs().at(i), dbModel->getMapDsts().at(i));
         }
 
-
         updateMapPaths();
         updateTempPath();
         //updateMaps();
 
+         qDebug() << "updatedScene, num children = " << QGraphicsScene::children().count();
     }
 }
 
@@ -388,6 +392,12 @@ void QMapperDbScene::setMapperDbModel(QMapperDbModel* model)
 void QMapperDbScene::setMapperDbModelActive(QMapperDbModel* model)
 {
     activeLayer.setMapperDbModel(model);
+}
+
+void QMapperDbScene::clearActiveLayer()
+{
+    activeLayer.removeMapPaths();
+    activeLayer.removeSigRects();
 }
 
 int QMapperDbScene::getIndexOfSigNear(QPointF pos, float len)
