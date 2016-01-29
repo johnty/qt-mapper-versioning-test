@@ -82,9 +82,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->tabMapperView->setTabText(1, "Other View");
 
     mapperSceneDbModel = new QMapperDbModel();
-    mapperSceneDbModel->LoadFromTest();
+    //mapperSceneDbModel->LoadFromTest();
+
+    mapperSceneDbModelActive = new QMapperDbModel();
+    //mapperSceneDbModelActive->LoadFromTest();
 
     mapperScene->setMapperDbModel(mapperSceneDbModel);
+    mapperScene->setMapperDbModelActive(mapperSceneDbModelActive);
+
     mapperScene->updateScene();
     //TODO: use this in the future... for now, refreshDB from MainWindow...
     //QObject::connect(mapperSceneDbModel, SIGNAL(dBUpdateSig()), mapperScene, SLOT(dpUpdated()));
@@ -121,11 +126,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //load all the previous versions in this folder:
     QString version_dir = app_root+"/versiondata";
     popupVersionsDlg->loadHistory(version_dir);
+    QObject::connect(popupVersionsDlg, SIGNAL(versionPressedSig(int)), this, SLOT(versionPressed(int)));
 
     const QMapperDbModel* versionModel = popupVersionsDlg->getMostRecent();
     if (versionModel)
+    {
         mapperSceneDbModel->syncWith(*versionModel);
-
+        mapperSceneDbModelActive->syncWith(*versionModel);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -206,6 +214,17 @@ void MainWindow::sceneUnMapSigReceived(int src, int dst)
     {
         mapperSceneDbModel->updateMap(src, dst, false);
     }
+}
+
+void MainWindow::versionPressed(int idx)
+{
+    qDebug()<< "MainWindow: version sig " <<idx;
+    if (popupVersionsDlg->getVersionModel(idx) != nullptr) {
+        mapperSceneDbModelActive->syncWith(*popupVersionsDlg->getVersionModel(idx));
+    }
+    else
+        qDebug() <<"did not get right model from version dlg";
+
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)

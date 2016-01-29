@@ -89,6 +89,16 @@ const QMapperDbModel *VersionsDialog::getMostRecent()
         return nullptr;
 }
 
+const QMapperDbModel *VersionsDialog::getVersionModel(int idx)
+{
+    if (idx < myVersions.size())
+    {
+        return myVersions.at(idx)->getMapperUIDbModel();
+    }
+    else
+        return nullptr;
+}
+
 void VersionsDialog::loadMappingFromFile(QString filepath)
 {
     qDebug()<<"opening json file " <<filepath;
@@ -115,5 +125,7 @@ void VersionsDialog::on_listView_pressed(const QModelIndex &index)
     qDebug()<<"version pressed" << index.row();
     if (index.row() < annotationList.size())
         ui->annotationEdit->setText(annotationList.at(index.row()));
+
+    Q_EMIT versionPressedSig(index.row());
 
 }

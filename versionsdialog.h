@@ -24,6 +24,10 @@ public:
     void loadHistory(QString folder_path);
 
     const QMapperDbModel *getMostRecent();
+    const QMapperDbModel *getVersionModel(int idx);
+
+Q_SIGNALS:
+    void versionPressedSig(int indx);
 
 private Q_SLOTS:
 

@@ -52,7 +52,7 @@ void QMapperSceneLayer::updateLayer()
             CustomRect * sigrect;
             int offsetY;
             int offsetX;
-            if (dbModel->isOutputSig(i))\
+            if (dbModel->isOutputSig(i))
             {
                 offsetX = 0;
                 outputOffsetY += MAPPER_SCENE_ITEM_H + MAPPER_SCENE_SPACER;
@@ -67,12 +67,12 @@ void QMapperSceneLayer::updateLayer()
             sigrect = new CustomRect(offsetX + myOffset, offsetY+myOffset, devname, signame);
             sigrect->setOutlineColDef(QColor(255, 255, 255, 0));
             //QObject::connect(sigrect, SIGNAL(mouseDragSig(QPointF)), this, SLOT(mouseDragged(QPointF)));
-            QObject::connect(sigrect, SIGNAL(mouseDragSig(QPointF, QPointF)), myParentScene, SLOT(mouseDragged(QPointF, QPointF)));
+            //QObject::connect(sigrect, SIGNAL(mouseDragSig(QPointF, QPointF)), myParentScene, SLOT(mouseDragged(QPointF, QPointF)));
             //QObject::connect(sigrect, SIGNAL(mouseDropSig(QPointF)), this, SLOT(mouseDropped(QPointF)));
-            QObject::connect(sigrect, SIGNAL(mouseDropSig(QPointF, QPointF)), myParentScene, SLOT(mouseDropped(QPointF, QPointF)));
+            //QObject::connect(sigrect, SIGNAL(mouseDropSig(QPointF, QPointF)), myParentScene, SLOT(mouseDropped(QPointF, QPointF)));
             //QObject::connect(sigrect, SIGNAL(mousePressSig()), this, SLOT(mousePressed()));
-            QObject::connect(sigrect, SIGNAL(rectMovedSig()), myParentScene, SLOT(devsigMoved()));
-            QObject::connect(sigrect, SIGNAL(mouseDoubleClickSig()), myParentScene, SLOT(mouseDoubleClicked()));
+            //QObject::connect(sigrect, SIGNAL(rectMovedSig()), myParentScene, SLOT(devsigMoved()));
+            //QObject::connect(sigrect, SIGNAL(mouseDoubleClickSig()), myParentScene, SLOT(mouseDoubleClicked()));
             sigs.push_back(sigrect);
             //addItem(sigrect); //scene
             myGraphicsItems.addToGroup(sigrect);

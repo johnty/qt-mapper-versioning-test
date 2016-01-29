@@ -5,7 +5,7 @@ QMapperDbScene::QMapperDbScene(QObject *parent) : QGraphicsScene(parent), active
     dbModel = NULL;
     addItem(&tempPathItem);
     tempPathItem.setPen(QPen(Qt::red, 2));
-    //addItem(activeLayer.getLayerItems());
+    addItem(activeLayer.getLayerItems());
     tempPathItem.setVisible(false);
 }
 
@@ -313,7 +313,7 @@ void QMapperDbScene::updateScene()
         //add stuff back
 
         activeLayer.getLayerItems()->setZValue(MAPPER_SCENE_MIDDLE_LAYER);
-        activeLayer.setOffset(15);
+        //activeLayer.setOffset(15);
         activeLayer.setDrawText(false);
         QColor activeLayerCol(200, 200, 0);
         activeLayer.setRectColour(activeLayerCol);

@@ -37,6 +37,8 @@ public Q_SLOTS:
     void sceneMapSigReceived(int src, int dst);
     void sceneUnMapSigReceived(int src, int dst);
 
+    void versionPressed(int idx);
+
 private Q_SLOTS:
     void on_tabMain_tabBarDoubleClicked(int index);
 
@@ -78,6 +80,7 @@ private:
     QMapperDbScene *mapperScene;
 
     QMapperDbModel *mapperSceneDbModel;
+    QMapperDbModel *mapperSceneDbModelActive; //from version history, etc.
 
 
     // for keeping track of last selected index in model
