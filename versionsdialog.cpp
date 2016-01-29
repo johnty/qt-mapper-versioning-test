@@ -91,6 +91,13 @@ const QMapperDbModel *VersionsDialog::getMostRecent()
 
 const QMapperDbModel *VersionsDialog::getVersionModel(int idx)
 {
+    for (int i=0; i<myVersions.size(); i++)
+    {
+        const QMapperDbModel* model = myVersions.at(i)->getMapperUIDbModel();
+        const QVector<int> srcs = model->getMapSrcs();
+        qDebug() << " version # "<<i<< "size"<< srcs.size();
+    }
+
     if (idx < myVersions.size())
     {
         return myVersions.at(idx)->getMapperUIDbModel();

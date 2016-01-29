@@ -42,8 +42,8 @@ public:
 
 
     //TODO: decide on QVector or std::vector and then make it consistent throughout!!
-    const QVector<int>& getMapSrcs() { return mapperMapsSrc;}
-    const QVector<int>& getMapDsts() { return mapperMapsDst;}
+    const QVector<int>& getMapSrcs() const { return mapperMapsSrc;}
+    const QVector<int>& getMapDsts() const { return mapperMapsDst;}
 
     void addDevice(QString devName);
     void addSignal(QString devName, QString sigName, bool isInput);

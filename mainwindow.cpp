@@ -134,6 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
         mapperSceneDbModel->syncWith(*versionModel);
         mapperSceneDbModelActive->syncWith(*versionModel);
     }
+    mapperScene->updateScene();
 }
 
 MainWindow::~MainWindow()
@@ -220,7 +221,10 @@ void MainWindow::versionPressed(int idx)
 {
     qDebug()<< "MainWindow: version sig " <<idx;
     if (popupVersionsDlg->getVersionModel(idx) != nullptr) {
+        qDebug()<< " old size = "<< mapperSceneDbModel->getMapSrcs().size();
         mapperSceneDbModelActive->syncWith(*popupVersionsDlg->getVersionModel(idx));
+        qDebug()<< " new size = "<< mapperSceneDbModel->getMapSrcs().size();
+        //mapperScene->update();
     }
     else
         qDebug() <<"did not get right model from version dlg";
