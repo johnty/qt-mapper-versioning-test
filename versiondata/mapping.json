@@ -1,0 +1,148 @@
+{
+    "mapping": {
+        "fileversion": "dot-1",
+        "sources": [
+            {
+                "id": "s0",
+                "device": "spine.1",
+                "signal": "head/tilt"
+            },
+            {
+                "id": "s1",
+                "device": "spine.1",
+                "signal": "rib/accel/y"
+            },
+            {
+                "id": "s2",
+                "device": "spine.1",
+                "signal": "rib/accel/x"
+            },
+            {
+                "id": "s3",
+                "device": "spine.1",
+                "signal": "head/roll"
+            },
+            {
+                "id": "s4",
+                "device": "spine.1",
+                "signal": "head/roll"
+            }
+        ],
+        "destinations": [
+            {
+                "id": "d0",
+                "device": "clef.1",
+                "signal": "munger.1/pitch"
+            },
+            {
+                "id": "d1",
+                "device": "clef.1",
+                "signal": "melody2harmony.1/threshold/low"
+            },
+            {
+                "id": "d2",
+                "device": "clef.1",
+                "signal": "melody2harmony.1/threshold/high"
+            },
+            {
+                "id": "d3",
+                "device": "clef.1",
+                "signal": "munger.1/pitch-var"
+            },
+            {
+                "id": "d4",
+                "device": "clef.1",
+                "signal": "melody2harmony.1/mix"
+            }
+        ],
+        "connections": [
+            {
+                "mute": 0,
+                "mode": "linear",
+                "range": [
+                    -1.570796012878418,
+                    1.570796012878418,
+                    0.8999999761581421,
+                    0.009999999776482582
+                ],
+                "expression": "d0=s0",
+                "clipMin": "none",
+                "clipMax": "none"
+            },
+            {
+                "mute": 0,
+                "mode": "linear",
+                "range": [
+                    -1,
+                    1,
+                    0,
+                    10
+                ],
+                "expression": "d1=s1*(5)+(5)",
+                "clipMin": "none",
+                "clipMax": "none"
+            },
+            {
+                "mute": 0,
+                "mode": "linear",
+                "range": [
+                    -1,
+                    2,
+                    5,
+                    80
+                ],
+                "expression": "d2=s2*(25)+(30)",
+                "clipMin": "none",
+                "clipMax": "none"
+            },
+            {
+                "mute": 0,
+                "mode": "linear",
+                "range": [
+                    -1.570796012878418,
+                    1.570796012878418,
+                    0,
+                    2
+                ],
+                "expression": "d3=s3*(0.63662)+(1)",
+                "clipMin": "none",
+                "clipMax": "none"
+            },
+            {
+                "mute": 0,
+                "mode": "linear",
+                "range": [
+                    0,
+                    15,
+                    70,
+                    0
+                ],
+                "expression": "d4=s4*(-4.66667)+(70)",
+                "clipMin": "none",
+                "clipMax": "none"
+            }
+        ],
+        "signals" : [
+            {
+            	"name": "head/tilt",
+            	"device": "spine.1",
+            	"direction": "output"
+            },
+            {
+            	"name": "rib/accel/y",
+            	"device": "spine.1",
+            	"direction": "output"
+            },
+            {
+            	"name": "rib/accel/x",
+            	"device": "spine.1",
+            	"direction": "output"
+            },
+            {
+            	"name": "head/roll",
+            	"device": "spine.1",
+            	"direction": "output"
+            }
+        ]
+    }
+}
