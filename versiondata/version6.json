@@ -9,7 +9,17 @@
             {
                 "device": "clef.1",
                 "id": "d1",
+                "signal": "melody2harmony.1/threshold/high"
+            },
+            {
+                "device": "clef.1",
+                "id": "d2",
                 "signal": "munger.1/pitch-var"
+            },
+            {
+                "device": "clef.1",
+                "id": "d3",
+                "signal": "melody2harmony.1/mix"
             }
         ],
         "signals": [
@@ -73,7 +83,17 @@
             {
                 "device": "spine.1",
                 "id": "s1",
+                "signal": "rib/accel/x"
+            },
+            {
+                "device": "spine.1",
+                "id": "s2",
                 "signal": "head/roll"
+            },
+            {
+                "device": "spine.1",
+                "id": "s3",
+                "signal": "rib/accel/y"
             }
         ]
     }
