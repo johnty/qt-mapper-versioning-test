@@ -134,5 +134,30 @@ void VersionsDialog::on_listView_pressed(const QModelIndex &index)
         ui->annotationEdit->setText(annotationList.at(index.row()));
 
     Q_EMIT versionPressedSig(index.row());
+    if (index.row() == annotationList.size())
+    {
+        ui->annotationEdit->setText("[insert annotation here]");
+    }
 
+    if (index.row() < myVersions.size())
+    {
+        ui->pushButtonSave->setEnabled(false);
+        ui->pushButtonLoad->setEnabled(true);
+    }
+    else if (index.row() == myVersions.size()) //we've selected "working version"
+    {
+        ui->pushButtonLoad->setEnabled(false);
+        ui->pushButtonSave->setEnabled(true);
+    }
+
+}
+
+void VersionsDialog::on_pushButtonLoad_clicked()
+{
+    int idx = ui->listView->currentIndex().row();
+    qDebug() <<"loading row" << idx;
+    if (idx < myVersions.size())
+    {
+        Q_EMIT versionLoadSig(idx);
+    }
 }

@@ -83,11 +83,7 @@ void MapperJsonConfig::FromUIDbToJson()
 
 
     }
-    QJsonObject mappingsObj;
-    mappingsObj.insert("sources", srcArray);
-    mappingsObj.insert("destinations", dstArray);
 
-    myJsonMapperConfig.insert("mapping", mappingsObj);
 
     //signal list:
     QJsonArray sigsArray;
@@ -100,7 +96,13 @@ void MapperJsonConfig::FromUIDbToJson()
         sigsArray.append(sig);
 
     }
-    myJsonMapperConfig.insert("signals", sigsArray);
+    QJsonObject mappingsObj;
+    mappingsObj.insert("sources", srcArray);
+    mappingsObj.insert("destinations", dstArray);
+    mappingsObj.insert("signals", sigsArray);
+
+    //add to root "mapping" object
+    myJsonMapperConfig.insert("mapping", mappingsObj);
 }
 
 bool MapperJsonConfig::ParseJsonObject(const QJsonObject& json_obj)

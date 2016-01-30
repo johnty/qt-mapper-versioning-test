@@ -125,7 +125,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //load all the previous versions in this folder:
     QString version_dir = app_root+"/versiondata";
     popupVersionsDlg->loadHistory(version_dir);
-    QObject::connect(popupVersionsDlg, SIGNAL(versionPressedSig(int)), this, SLOT(versionPressed(int)));
+    connect(popupVersionsDlg, SIGNAL(versionPressedSig(int)), this, SLOT(versionPressed(int)));
+    connect(popupVersionsDlg, SIGNAL(versionLoadSig(int)), this, SLOT(versionLoaded(int)));
 
     const QMapperDbModel* versionModel = popupVersionsDlg->getMostRecent();
     if (versionModel)
@@ -235,6 +236,12 @@ void MainWindow::versionPressed(int idx)
         //set top layer to invisible
         mapperScene->setActiveLayerVisible(false);
     }
+}
+
+void MainWindow::versionLoaded(int idx)
+{
+    mapperSceneDbModel->syncWith(*popupVersionsDlg->getVersionModel(idx));
+    mapperScene->updateScene();
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)

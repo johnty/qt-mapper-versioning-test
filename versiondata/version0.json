@@ -46,8 +46,8 @@
             	"direction": "input"
             },
             {
-            	"name": "some_random_thing",
-            	"device": "another_dev",
+            	"name": "in_sig0",
+            	"device": "test_dev",
             	"direction": "input"
             }
         ]

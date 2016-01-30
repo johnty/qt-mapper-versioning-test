@@ -27,12 +27,17 @@ public:
     const QMapperDbModel *getVersionModel(int idx);
 
 Q_SIGNALS:
-    void versionPressedSig(int indx);
+    void versionPressedSig(int idx);
+    void versionLoadSig(int idx);
+    void loadPressed(); //emit load pressed message, will apply "active"layer's model onto the working model.
 
 private Q_SLOTS:
 
 
     void on_listView_pressed(const QModelIndex &index);
+
+    void on_pushButtonLoad_clicked();
+
 
 private:
 

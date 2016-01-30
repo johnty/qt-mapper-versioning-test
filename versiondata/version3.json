@@ -21,11 +21,6 @@
                 "id": "s3",
                 "device": "spine.1",
                 "signal": "head/roll"
-            },
-            {
-                "id": "s4",
-                "device": "spine.1",
-                "signal": "head/roll"
             }
         ],
         "destinations": [
@@ -48,11 +43,6 @@
                 "id": "d3",
                 "device": "clef.1",
                 "signal": "munger.1/pitch-var"
-            },
-            {
-                "id": "d4",
-                "device": "clef.1",
-                "signal": "melody2harmony.1/mix"
             }
         ],
         "connections": [
@@ -169,8 +159,8 @@
             	"direction": "input"
             },
             {
-            	"name": "in_sig0",
-            	"device": "test_dev",
+            	"name": "some_random_thing",
+            	"device": "another_dev",
             	"direction": "input"
             }
         ]
