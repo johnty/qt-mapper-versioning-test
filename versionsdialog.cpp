@@ -9,6 +9,13 @@ VersionsDialog::VersionsDialog(QWidget *parent) :
     ui->setupUi(this);
     versionList = new QStandardItemModel(this);
     ui->listView->setModel(versionList);
+
+    ui->pushButtonSave->setEnabled(false);
+    ui->pushButtonLoad->setEnabled(false);
+
+    versionDataDir = QDir("");
+    annoStrDef = "[insert annotation here]";
+    annoStrTmp = "";
 }
 
 VersionsDialog::~VersionsDialog()
@@ -43,7 +50,7 @@ void VersionsDialog::fromMapperDBView(const QMapperDbModel *dbviewmodell)
 
 }
 
-void VersionsDialog::loadHistory(QString folder_path)
+void VersionsDialog::loadVersionHistory(QString folder_path)
 {
     QStringList nameFilter("*.json");
     QDir directory(folder_path);
@@ -79,6 +86,12 @@ void VersionsDialog::loadHistory(QString folder_path)
     versionList->appendRow(new QStandardItem("working version"));
 }
 
+void VersionsDialog::loadVersionHistory()
+{
+    QString folder_path = versionDataDir.absolutePath();
+    loadVersionHistory(folder_path);
+}
+
 const QMapperDbModel *VersionsDialog::getMostRecent()
 {
     if (myVersions.size())
@@ -106,6 +119,53 @@ const QMapperDbModel *VersionsDialog::getVersionModel(int idx)
         return nullptr;
 }
 
+void VersionsDialog::saveModelToJSON(QMapperDbModel *modelToSave, int idx)
+{
+
+    //as we trigger a save from main window, do following:
+    //  1 write json file of current mapperScene
+    //  2 write txt file of current annotation
+    //  3 load newly stored json and text files
+    //   - and add to annotation and versions list
+    //   - update versionList model
+
+    MapperJsonConfig* newVersionJSON = new MapperJsonConfig();
+    newVersionJSON->FromUIDbModel(modelToSave);
+    newVersionJSON->FromUIDbToJson();
+    qDebug() <<"versionsDialog saving model to json version " <<idx;
+    QString jsonfilename = versionDataDir.absolutePath()+"/version"+QString::number(idx)+".json";
+    newVersionJSON->SaveConfigToJSONFile(jsonfilename);
+
+    //save annotation:
+    QString annonfilename = versionDataDir.absolutePath()+"/version"+QString::number(idx)+".txt";
+    QFile file(annonfilename);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        stream << ui->annotationEdit->document()->toPlainText();
+    }
+
+
+    //and now do a load!
+    loadMappingFromFile(jsonfilename);
+    //TODO: modularize this!
+    QFile txtFile(annonfilename);
+    if (!txtFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug()<<"error reading txt annotation!";
+    }
+    else
+    {
+        //expect a single line only...
+        QTextStream in(&txtFile);
+        QString annoText = in.readLine();
+        qDebug() <<"txt contents: " <<annoText;
+        annotationList.append(annoText);
+    }
+
+
+}
+
 void VersionsDialog::loadMappingFromFile(QString filepath)
 {
     qDebug()<<"opening json file " <<filepath;
@@ -130,14 +190,29 @@ void VersionsDialog::loadMappingFromFile(QString filepath)
 void VersionsDialog::on_listView_pressed(const QModelIndex &index)
 {
     qDebug()<<"version pressed" << index.row();
-    if (index.row() < annotationList.size())
-        ui->annotationEdit->setText(annotationList.at(index.row()));
-
-    Q_EMIT versionPressedSig(index.row());
+    //store the annotation of working model
     if (index.row() == annotationList.size())
     {
+        ui->annotationEdit->setReadOnly(false);
+//        if (annoStrTmp != "")
+//            ui->annotationEdit->setText(annoStrTmp);
+//        else
         ui->annotationEdit->setText("[insert annotation here]");
     }
+    else //store the working copy annotation
+    {
+//        if (annoStrTmp == "") //note: the trick is to only do this once
+//            annoStrTmp = ui->annotationEdit->document()->toPlainText();
+        ui->annotationEdit->setReadOnly(true);
+    }
+
+    //load existing annotation
+    if (index.row() < myVersions.size())
+    {
+        ui->annotationEdit->setText(annotationList.at(index.row()));
+    }
+    Q_EMIT versionPressedSig(index.row());
+
 
     if (index.row() < myVersions.size())
     {
@@ -160,4 +235,23 @@ void VersionsDialog::on_pushButtonLoad_clicked()
     {
         Q_EMIT versionLoadSig(idx);
     }
+}
+
+void VersionsDialog::on_pushButtonSave_clicked()
+{
+
+    //emit message so main window can trigger db save from current working version
+
+    //add it beneath the "working version", which is at count()-1
+    // the new version index should be count().
+
+    int listSize = versionList->rowCount();
+
+    //test
+    QString name = "version" + QString::number(listSize-1) + ".json";
+    versionList->insertRow(listSize-1, new QStandardItem(name));
+    //test
+    qDebug() <<"added new version: " <<name;
+
+    Q_EMIT versionSaveSig(myVersions.size());
 }

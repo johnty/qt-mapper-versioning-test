@@ -119,14 +119,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //this folder may have to be corrected!
     QDir dir(QDir::current());
     dir.cdUp(); dir.cdUp(); dir.cdUp();; dir.cdUp();
-    QString app_root = dir.absolutePath();
+    //QString app_root = dir.absolutePath();
     //popupVersionsDlg->testLoadSaveJSON(file);
 
     //load all the previous versions in this folder:
-    QString version_dir = app_root+"/versiondata";
-    popupVersionsDlg->loadHistory(version_dir);
+    //QString version_dir = app_root+"/versiondata";
+    dir.cd("versiondata");
+    popupVersionsDlg->setVersionDataDir(dir);
+    popupVersionsDlg->loadVersionHistory();
+    //popupVersionsDlg->loadHistory(version_dir);
     connect(popupVersionsDlg, SIGNAL(versionPressedSig(int)), this, SLOT(versionPressed(int)));
     connect(popupVersionsDlg, SIGNAL(versionLoadSig(int)), this, SLOT(versionLoaded(int)));
+    connect(popupVersionsDlg, SIGNAL(versionSaveSig(int)), this, SLOT(versionSave(int)));
 
     const QMapperDbModel* versionModel = popupVersionsDlg->getMostRecent();
     if (versionModel)
@@ -242,6 +246,11 @@ void MainWindow::versionLoaded(int idx)
 {
     mapperSceneDbModel->syncWith(*popupVersionsDlg->getVersionModel(idx));
     mapperScene->updateScene();
+}
+
+void MainWindow::versionSave(int idx)
+{
+    popupVersionsDlg->saveModelToJSON(mapperSceneDbModel, idx);
 }
 
 void MainWindow::on_tabMain_tabBarDoubleClicked(int index)

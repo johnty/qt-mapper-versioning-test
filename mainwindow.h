@@ -39,6 +39,7 @@ public Q_SLOTS:
 
     void versionPressed(int idx);
     void versionLoaded(int idx);
+    void versionSave(int idx);
 
 private Q_SLOTS:
     void on_tabMain_tabBarDoubleClicked(int index);

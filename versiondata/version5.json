@@ -1,0 +1,80 @@
+{
+    "mapping": {
+        "destinations": [
+            {
+                "device": "clef.1",
+                "id": "d0",
+                "signal": "munger.1/pitch"
+            },
+            {
+                "device": "clef.1",
+                "id": "d1",
+                "signal": "munger.1/pitch-var"
+            }
+        ],
+        "signals": [
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "head/tilt"
+            },
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "rib/accel/y"
+            },
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "rib/accel/x"
+            },
+            {
+                "device": "spine.1",
+                "direction": "output",
+                "name": "head/roll"
+            },
+            {
+                "device": "clef.1",
+                "direction": "input",
+                "name": "munger.1/pitch"
+            },
+            {
+                "device": "clef.1",
+                "direction": "input",
+                "name": "melody2harmony.1/threshold/low"
+            },
+            {
+                "device": "clef.1",
+                "direction": "input",
+                "name": "melody2harmony.1/threshold/high"
+            },
+            {
+                "device": "clef.1",
+                "direction": "input",
+                "name": "munger.1/pitch-var"
+            },
+            {
+                "device": "clef.1",
+                "direction": "input",
+                "name": "melody2harmony.1/mix"
+            },
+            {
+                "device": "another_dev",
+                "direction": "input",
+                "name": "some_random_thing"
+            }
+        ],
+        "sources": [
+            {
+                "device": "spine.1",
+                "id": "s0",
+                "signal": "head/tilt"
+            },
+            {
+                "device": "spine.1",
+                "id": "s1",
+                "signal": "head/roll"
+            }
+        ]
+    }
+}
