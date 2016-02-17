@@ -9,12 +9,12 @@ testmapperdevice::testmapperdevice(int numinputs, int numoutputs, QString devnam
     for (int i=0; i<numinputs; i++)
     {
         QString signame = "in" + QString::number(i);
-        Signal testsig = myDevPtr->add_input(signame.toStdString(),1,'i',0,0,0,0,0);
+        Signal testsig = myDevPtr->add_input_signal(signame.toStdString(),1,'i',0,0,0,0,0);
     }
     for (int i=0; i<numoutputs; i++)
     {
         QString signame = "out" + QString::number(i);
-        Signal testsig = myDevPtr->add_output(signame.toStdString(),1,'i',0,0,0);
+        Signal testsig = myDevPtr->add_output_signal(signame.toStdString(),1,'i',0,0,0);
     }
     while (!myDevPtr->ready())
     {

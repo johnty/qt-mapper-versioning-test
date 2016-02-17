@@ -56,7 +56,7 @@ ListTab::~ListTab()
     ;
 }
 
-void ListTab::deviceEvent(mapper::Db *db)
+void ListTab::deviceEvent(mapper::Database *db)
 {
     qDebug() << "addDevice to ListTab";
     sources->clear();
@@ -119,7 +119,7 @@ void ListTab::deviceEvent()
 //    }
 }
 
-void ListTab::linkEvent(mapper::Db *db)
+void ListTab::linkEvent(mapper::Database *db)
 {
     qDebug()<< "Listtab: linkevent";
 }

@@ -92,7 +92,7 @@ public:
     void breakMap(QString sdev, QString ddev, QString ssig, QString dsig);
 
     //TODO: rethink this kind of access, as well as similarly poor life choices
-    mapper::Db* getDB() { return &db;}
+    mapper::Database* getDB() { return &db;}
 
 Q_SIGNALS:
     void devUpdatedSig();
@@ -105,7 +105,7 @@ public Q_SLOTS:
 
 private:
 
-    mapper::Db db;
+    mapper::Database db;
 
     //TODO: should we use std containers or QT ones?
     // ALSO, by now we should realize we have such a list

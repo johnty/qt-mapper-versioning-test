@@ -2,7 +2,7 @@
 
 mapperdbthread* FIX_ME;
 
-mapperdbthread::mapperdbthread() :db(MAPPER_SUBSCRIBE_ALL)
+mapperdbthread::mapperdbthread() : db(MAPPER_OBJ_ALL)
 {
     db.add_device_callback(devActionHandler, nullptr);
     db.add_signal_callback(sigActionHandler, nullptr);
@@ -27,7 +27,7 @@ void mapperdbthread::run()
     {
         //res = "Db scan result:\n";
         myLock.lock();
-        db.update(50);
+        db.poll(50);
         myLock.unlock();
     }
     qDebug()<<"db thread ending...";
@@ -363,7 +363,7 @@ void mapperdbthread::breakMap(QString sdev, QString ddev, QString ssig, QString 
                 qDebug() <<"found map to be unmapped: id =  " <<curr_map.id()
                                 <<" src = " <<curr_map.source().signal().name().c_str()
                                 <<" dst = " <<curr_map.destination().signal().name().c_str();
-                curr_map.unmap();
+                curr_map.release();
             }
         }
     }
@@ -378,7 +378,7 @@ void mapperdbthread::breakMap(QString sdev, QString ddev, QString ssig, QString 
 
         if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
         {
-            map->unmap();
+            map->release();
             delete map;
             myMaps.erase(myMaps.begin()+i);
         }

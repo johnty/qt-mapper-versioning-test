@@ -24,8 +24,8 @@ public:
     void deviceEvent();
     void linkEvent();
 
-    void deviceEvent(mapper::Db *db);
-    void linkEvent(mapper::Db *db);
+    void deviceEvent(mapper::Database *db);
+    void linkEvent(mapper::Database *db);
 
 public Q_SLOTS:
     void SigSelected(QString dev, QString sig);
