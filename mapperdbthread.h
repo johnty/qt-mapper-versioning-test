@@ -40,25 +40,28 @@ public:
     //FROM mapper db:
     //***********************
     //static callback functions
-    static void devActionHandler(mapper_device dev,
-                                 mapper_record_action action,
+    static void devActionHandler(mapper_database db,
+                                 mapper_device dev,
+                                 mapper_record_event action,
                                  const void *user);
-    static void sigActionHandler(mapper_signal sig,
-                                    mapper_record_action action,
-                                    const void *user);
-    static void mapActionHandler(mapper_map map,
-                                 mapper_record_action action,
+    static void sigActionHandler(mapper_database db,
+                                 mapper_signal sig,
+                                 mapper_record_event action,
+                                 const void *user);
+    static void mapActionHandler(mapper_database db,
+                                 mapper_map map,
+                                 mapper_record_event action,
                                  const void *user);
 
     //callback->instance functions, bound by awesome hack (global static pointer to self)
     void devActionFn(mapper_device dev,
-                     mapper_record_action action);
+                     mapper_record_event action);
 
     void sigActionFn(mapper_signal sig,
-                     mapper_record_action action);
+                     mapper_record_event action);
 
     void mapActionFn(mapper_map map,
-                     mapper_record_action action);
+                     mapper_record_event action);
 
     //***********************
     //TO mapper db:
@@ -121,7 +124,7 @@ private:
 
 //    fn pointers to callback methods
     //note: in c++11 we can init to NULL here, pre-c++11 we can't!
-    void (mapperdbthread::*ptrDevAction)(mapper_device dev, mapper_record_action action) = NULL;
+    void (mapperdbthread::*ptrDevAction)(mapper_device dev, mapper_record_event action) = NULL;
 
     void addDevSigs(QString devname);
     void signalToDB(QString devname, const mapper::Signal sig, bool isAdd);

@@ -93,19 +93,21 @@ void mapperdbthread::refreshDbNetworkModel()
 
 void mapperdbthread::addDevSigs(QString devname)
 {
-    mapper::Device dev = db.device_by_name(devname.toStdString());
+    //####TODO: update API
+//    mapper::Device dev = db.device_by_name(devname.toStdString());
 
-    mapper::Signal::Query qry = dev.signals(MAPPER_DIR_ANY);
-    for (; qry != qry.end(); qry++)
-    {
-        mapper::Signal csig = *qry;
-        signalToDB(devname, csig, true);
-   }
+//    mapper::Signal::Query qry = dev.signals(MAPPER_DIR_ANY);
+//    for (; qry != qry.end(); qry++)
+//    {
+//        mapper::Signal csig = *qry;
+//        signalToDB(devname, csig, true);
+//   }
 }
 
-void mapperdbthread::sigActionHandler(mapper_signal sig,
-                                         mapper_record_action action,
-                                         const void *user)
+void mapperdbthread::sigActionHandler(mapper_database db,
+                                      mapper_signal sig,
+                                      mapper_record_event action,
+                                      const void *user)
 {
     QString actionStr;
     switch (action) {
@@ -126,7 +128,10 @@ void mapperdbthread::sigActionHandler(mapper_signal sig,
     FIX_ME->sigActionFn(sig, action);
 }
 
-void mapperdbthread::mapActionHandler(mapper_map map, mapper_record_action action, const void *user)
+void mapperdbthread::mapActionHandler(mapper_database db,
+                                      mapper_map map,
+                                      mapper_record_event action,
+                                      const void *user)
 {
 
     QString actionStr;
@@ -149,7 +154,7 @@ void mapperdbthread::mapActionHandler(mapper_map map, mapper_record_action actio
     FIX_ME->mapActionFn(map, action);
 }
 
-void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
+void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_event action)
 {
     //this call might suggest an addition to the Signal wrapper class?
     QString devname(mapper_device_name( mapper_signal_device(sig)));
@@ -171,27 +176,28 @@ void mapperdbthread::sigActionFn(mapper_signal sig, mapper_record_action action)
     }
 }
 
-void mapperdbthread::mapActionFn(mapper_map map, mapper_record_action action)
+void mapperdbthread::mapActionFn(mapper_map map, mapper_record_event action)
 {
-    //add to local db:
-    mapper::Map cmap(map);
-    QString src_sig(cmap.source().signal().name().c_str());
-    QString src_dev(cmap.source().device().name().c_str());
-    QString dst_sig(cmap.destination().signal().name().c_str());
-    QString dst_dev(cmap.destination().device().name().c_str());
+   //####TODO: update API
+//    //add to local db:
+//    mapper::Map cmap(map);
+//    QString src_sig(cmap.source().signal().name().c_str());
+//    QString src_dev(cmap.source().device().name().c_str());
+//    QString dst_sig(cmap.destination().signal().name().c_str());
+//    QString dst_dev(cmap.destination().device().name().c_str());
 
-    switch (action) {
-    case MAPPER_ADDED:
-        qDebug()<<"mapAction: adding map from "<< src_dev<<":"<<src_sig<<" to " <<dst_dev<<":"<<dst_sig;
-        myDbNetworkModel.updateMap(src_dev, src_sig, dst_dev, dst_sig);
-        Q_EMIT mapUpdatedSig();
-        break;
-     case MAPPER_REMOVED:
-        qDebug()<<"mapAction: removing map" << src_dev<<":"<<src_sig<<" to " <<dst_dev<<":"<<dst_sig;
-        myDbNetworkModel.updateMap(src_dev, src_sig, dst_dev, dst_sig, false);
-        Q_EMIT mapUpdatedSig();
-        break;
-    }
+//    switch (action) {
+//    case MAPPER_ADDED:
+//        qDebug()<<"mapAction: adding map from "<< src_dev<<":"<<src_sig<<" to " <<dst_dev<<":"<<dst_sig;
+//        myDbNetworkModel.updateMap(src_dev, src_sig, dst_dev, dst_sig);
+//        Q_EMIT mapUpdatedSig();
+//        break;
+//     case MAPPER_REMOVED:
+//        qDebug()<<"mapAction: removing map" << src_dev<<":"<<src_sig<<" to " <<dst_dev<<":"<<dst_sig;
+//        myDbNetworkModel.updateMap(src_dev, src_sig, dst_dev, dst_sig, false);
+//        Q_EMIT mapUpdatedSig();
+//        break;
+//    }
 }
 
 void mapperdbthread::tryMap(int src, int dst, bool is_make)
@@ -210,7 +216,7 @@ void mapperdbthread::tryMap(int src, int dst, bool is_make)
 }
 
 
-void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
+void mapperdbthread::devActionFn(mapper_device dev, mapper_record_event action)
 {
     //qDebug() <<"instance devAction";
     QString devname(mapper_device_name(dev));
@@ -231,8 +237,8 @@ void mapperdbthread::devActionFn(mapper_device dev, mapper_record_action action)
     //Q_EMIT devUpdatedSig();
 }
 
-void mapperdbthread::devActionHandler(mapper_device dev,
-                            mapper_record_action action,
+void mapperdbthread::devActionHandler(mapper_database db, mapper_device dev,
+                            mapper_record_event action,
                             const void *user)
 {
     QString actionStr;
@@ -301,88 +307,91 @@ void mapperdbthread::syncRenderModel(QMapperDbModel *modelToSync)
 
 void mapperdbthread::makeMap(QString sdev, QString ddev, QString ssig, QString dsig)
 {
-    mapper::Device srcdev = db.device_by_name(sdev.toStdString());
-    mapper::Signal *src_sig = NULL;
+    //####TODO: update API
+//    mapper::Device srcdev = db.device_by_name(sdev.toStdString());
+//    mapper::Signal *src_sig = NULL;
 
 
-    //mapper::Signal::Query qry1 = srcdev.signals(MAPPER_DIR_OUTGOING);
-    for (auto const& sig : db.signals(MAPPER_DIR_OUTGOING))
-    {
-        //mapper::Signal sig = *qry1;
-        QString sig_name = sig.name().c_str();
-        if (sig_name == ssig)
-        {
-            //src_sig = &sig;
-            qDebug()<<"found src signal " <<sig_name<< "from device " << sdev;
-        }
-    }
-
-    mapper::Device dstdev = db.device_by_name(ddev.toStdString());
-    //mapper::Signal *dst_sig = NULL;
-
-    for (auto const& sig : db.signals(MAPPER_DIR_INCOMING))
-    {
-        QString sig_name = sig.name().c_str();
-        if (sig_name == dsig)
-        {
-            //dst_sig = &sig;
-            qDebug()<<"found dst signal " <<sig_name<< "from device " << ddev;
-        }
-    }
-    mapper::Map* map = new mapper::Map(srcdev.signal(ssig.toStdString()),
-                                       dstdev.signal(dsig.toStdString()));
-
-    map->push();
-
-    //test: query signals now...
-//    for (auto const& sig : db.signals(MAPPER_DIR_ANY))
+//    //mapper::Signal::Query qry1 = srcdev.signals(MAPPER_DIR_OUTGOING);
+//    for (auto const& sig : db.signals(MAPPER_DIR_OUTGOING))
 //    {
-//        mapper_direction dir = sig.property("direction");
-//        qDebug() << sig.name().c_str() << "DIRECTION = " << (int)dir;
+//        //mapper::Signal sig = *qry1;
+//        QString sig_name = sig.name().c_str();
+//        if (sig_name == ssig)
+//        {
+//            //src_sig = &sig;
+//            qDebug()<<"found src signal " <<sig_name<< "from device " << sdev;
+//        }
 //    }
 
-    myMaps.push_back(map);
+//    mapper::Device dstdev = db.device_by_name(ddev.toStdString());
+//    //mapper::Signal *dst_sig = NULL;
+
+//    for (auto const& sig : db.signals(MAPPER_DIR_INCOMING))
+//    {
+//        QString sig_name = sig.name().c_str();
+//        if (sig_name == dsig)
+//        {
+//            //dst_sig = &sig;
+//            qDebug()<<"found dst signal " <<sig_name<< "from device " << ddev;
+//        }
+//    }
+//    mapper::Map* map = new mapper::Map(srcdev.signal(ssig.toStdString()),
+//                                       dstdev.signal(dsig.toStdString()));
+
+//    map->push();
+
+//    //test: query signals now...
+////    for (auto const& sig : db.signals(MAPPER_DIR_ANY))
+////    {
+////        mapper_direction dir = sig.property("direction");
+////        qDebug() << sig.name().c_str() << "DIRECTION = " << (int)dir;
+////    }
+
+//    myMaps.push_back(map);
 
 }
 
 void mapperdbthread::breakMap(QString sdev, QString ddev, QString ssig, QString dsig)
 {
-    // not best way
-    for (auto const& map : db.maps())
-    {
-        for (int i=0; i<map.num_sources(); i++)
-        {
-            QString src_dev(map.source().device().name().c_str());
-            QString src_sig(map.source().signal().name().c_str());
-            QString dst_dev(map.destination().device().name().c_str());
-            QString dst_sig(map.destination().signal().name().c_str());
-            //you know, std::string == works too...
-            if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
-            {
-                mapper::Map curr_map = db.map_by_id(map.id());
-                qDebug() <<"found map to be unmapped: id =  " <<curr_map.id()
-                                <<" src = " <<curr_map.source().signal().name().c_str()
-                                <<" dst = " <<curr_map.destination().signal().name().c_str();
-                curr_map.release();
-            }
-        }
-    }
-    return; //TODO: get rid of myMaps!
-    for (int i=0; i<myMaps.size(); ++i)
-    {
-        mapper::Map* map = myMaps.at(i);
-        QString dst_sig(map->destination().signal().name().c_str());
-        QString dst_dev(map->destination().device().name().c_str());
-        QString src_sig(map->source().signal().name().c_str());
-        QString src_dev(map->source().device().name().c_str());
 
-        if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
-        {
-            map->release();
-            delete map;
-            myMaps.erase(myMaps.begin()+i);
-        }
-    }
+    //####TODO: update API
+//    // not best way
+//    for (auto const& map : db.maps())
+//    {
+//        for (int i=0; i<map.num_sources(); i++)
+//        {
+//            QString src_dev(map.source().device().name().c_str());
+//            QString src_sig(map.source().signal().name().c_str());
+//            QString dst_dev(map.destination().device().name().c_str());
+//            QString dst_sig(map.destination().signal().name().c_str());
+//            //you know, std::string == works too...
+//            if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
+//            {
+//                mapper::Map curr_map = db.map_by_id(map.id());
+//                qDebug() <<"found map to be unmapped: id =  " <<curr_map.id()
+//                                <<" src = " <<curr_map.source().signal().name().c_str()
+//                                <<" dst = " <<curr_map.destination().signal().name().c_str();
+//                curr_map.release();
+//            }
+//        }
+//    }
+//    return; //TODO: get rid of myMaps!
+//    for (int i=0; i<myMaps.size(); ++i)
+//    {
+//        mapper::Map* map = myMaps.at(i);
+//        QString dst_sig(map->destination().signal().name().c_str());
+//        QString dst_dev(map->destination().device().name().c_str());
+//        QString src_sig(map->source().signal().name().c_str());
+//        QString src_dev(map->source().device().name().c_str());
+
+//        if ( (sdev == src_dev) && (ssig == src_sig) && (ddev == dst_dev) && (dsig == dst_sig) )
+//        {
+//            map->release();
+//            delete map;
+//            myMaps.erase(myMaps.begin()+i);
+//        }
+//    }
 }
 
 void mapperdbthread::signalToDB(QString devname, const mapper::Signal signal, bool isAdd)

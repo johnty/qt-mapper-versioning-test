@@ -20,11 +20,11 @@ unix:macx { #using default *nix mapper/lo configurations
 DEFINES     += __MAC_OR_UNIX__ # in case we want some specific settings
 
 INCLUDEPATH += /usr/local/include
-INCLUDEPATH += /usr/local/include/mapper-0
+INCLUDEPATH += /usr/local/include/mapper
 
 #LIBS        += -L/usr/local/lib -lgit2
 LIBS        += -L/usr/local/lib/ -llo
-LIBS        += -L/usr/local/lib/ -lmapper-0
+LIBS        += -L/usr/local/lib/ -lmapper
 
 }
 
